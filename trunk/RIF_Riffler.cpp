@@ -1,3 +1,16 @@
+/*************************************************************
+* Copyright (c) 2010 by Egor N. Chashchin. All Rights Reserved.          *
+**************************************************************/
+
+/*
+*	RIF_Riffler.cpp - RenderMan DSO Rif-filter for using python scripts
+*  for filtering. Base source
+*
+*	Version: 0.1
+*	Authors: Egor N. Chashchin                   
+*	Contact: iqcook@gmail.com 
+* 
+*/
 #include "stdafx.h"
 
 #include "RiCalls.h"
