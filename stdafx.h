@@ -4,7 +4,7 @@
 
 /*
 *	stadfx.h - RenderMan DSO Rif-filter for using python scripts
-*  for filtering. common header
+*  for filtering. Common header
 *
 *	Version: 0.1
 *	Authors: Egor N. Chashchin                   
@@ -29,4 +29,5 @@ using namespace std;
 #include <RifPlugin.h>
 
 // PYTHON
+#undef _DEBUG // NEED TO BUILD DEBUG VERSION
 #include <Python.h>

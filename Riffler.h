@@ -13,19 +13,31 @@
 */
 #pragma once
 
-class Riffler :
-	public RifFilter
+class SetupLayer :	public RifFilter
 {
 public:
-	Riffler(PyObject*);
+	virtual void Setup(PyObject*) = 0;
+	virtual ~SetupLayer() {};
+};
+
+template<class T> 
+
+class Riffler :
+	public SetupLayer
+{
+public:
+	Riffler();
 	virtual ~Riffler();
 
+	virtual void Setup(PyObject*);
+
 private:
-	PyObject* m_object;
+	static PyObject* m_object;
+	T m_member;
 	// CATCHERS
 	//RtToken 	_Declare(char *name, char *declaration); // - little complex to startpoint
-	RtVoid  	_FrameBegin(RtInt frame);
-	PyObject* _FrameBeginFunc;
+	static RtVoid  	_FrameBegin(RtInt frame);
+	static PyObject* _FrameBeginFunc;
 	/*RtVoid  	_FrameEnd();
 	RtVoid  	_WorldBegin();
 	RtVoid  	_WorldEnd();
@@ -168,3 +180,4 @@ private:
 
 	RtVoid  	_PixelSampleImagerV(RtToken name, RtInt, RtToken[], RtPointer[]);*/
 };
+

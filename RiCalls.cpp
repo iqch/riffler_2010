@@ -3,8 +3,8 @@
 **************************************************************/
 
 /*
-*	Riffler.cpp - RenderMan DSO Rif-filter for using python scripts
-*  for filtering. Embedded module sourcecode
+*	RiCalls.cpp - RenderMan DSO Rif-filter for using python scripts
+*  for filtering. Embedded module source
 *
 *	Version: 0.1
 *	Authors: Egor N. Chashchin                   
@@ -13,10 +13,15 @@
 */
 #include "stdafx.h"
 
-// RIBEGIN
-PyObject* _RiBegin(PyObject *self, PyObject *args)
+// FrameBegin
+PyObject* _RiFrameBegin(PyObject *self, PyObject *args)
 {
 	//if(!PyArg_ParseTuple(args, ":numargs")) return NULL;
-	//return Py_BuildValue("i", numargs);
-	return Py_BuildValue("i", 0);
+
+	RtInt frame = 0;
+	if(!PyArg_ParseTuple(args, "i", &frame)) return NULL;
+
+	RiFrameBegin(frame);
+	
+	return Py_BuildValue("i", 1);
 };

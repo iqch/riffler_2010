@@ -13,9 +13,9 @@
 */
 #pragma once
 
-PyObject* _RiBegin(PyObject *self, PyObject *args);
+PyObject* _RiFrameBegin(PyObject *self, PyObject *args);
 
 static PyMethodDef MethodTable[] = {
-	{"RiBegin", _RiBegin, METH_VARARGS,""},
+	{"FrameBegin", _RiFrameBegin, METH_VARARGS,""},
 	{NULL, NULL, 0, NULL}
 };
