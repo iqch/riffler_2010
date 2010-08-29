@@ -3,10 +3,10 @@
 **************************************************************/
 
 /*
-*	Riffler.h - RenderMan DSO Rif-filter for using python scripts
-*  for filtering. Filter realization source
+*	Riffler_Setup.h - RenderMan DSO Rif-filter for using python scripts
+*  for filtering. Filter realization source - Setup functions
 *
-*	Version: 0.2
+*	Version: 0.3
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -72,8 +72,58 @@ template<class T> void Riffler<T>::Setup(PyObject* object)
 	PARSE_CALLBACK(RelativeDetail);
 	PARSE_CALLBACK(Perspective);
 
+	// ONE COLOR
 	PARSE_CALLBACK(Color);
 	PARSE_CALLBACK(Opacity);
+
+	// BOOLEAN
+	PARSE_CALLBACK(Matte);
+
+	// STRINGS
+	PARSE_CALLBACK(ShadingInterpolation);
+	PARSE_CALLBACK(SolidBegin);
+	PARSE_CALLBACK(EditAttributeBegin);
+	PARSE_CALLBACK(Orientation);
+	PARSE_CALLBACK(CoordSysTransform);
+	PARSE_CALLBACK(CoordinateSystem);
+	PARSE_CALLBACK(ScopedCoordinateSystem);
+	PARSE_CALLBACK(System);
+
+	// POLY-FLOATS
+
+	// 2
+	PARSE_CALLBACK(Clipping);
+	PARSE_CALLBACK(Shutter);
+	PARSE_CALLBACK(Exposure);
+	PARSE_CALLBACK(PixelSamples);
+
+	// 3
+	PARSE_CALLBACK(Scale);
+	PARSE_CALLBACK(DepthOfField);
+	PARSE_CALLBACK(Translate);
+
+	// 4
+	PARSE_CALLBACK(CropWindow);
+	PARSE_CALLBACK(ScreenWindow);
+	PARSE_CALLBACK(DetailRange);
+	PARSE_CALLBACK(Rotate);
+
+	// 6
+	PARSE_CALLBACK(ClippingPlane);
+
+	// 7
+	PARSE_CALLBACK(Skew);
+
+	// 8
+	PARSE_CALLBACK(TextureCoordinates);
+
+	// BOUNDS
+	PARSE_CALLBACK(Bound);
+	PARSE_CALLBACK(Detail);
+
+	// MATRICES
+	PARSE_CALLBACK(ConcatTransform);
+	PARSE_CALLBACK(Transform);
 };
 
 template class Riffler<bool>;
