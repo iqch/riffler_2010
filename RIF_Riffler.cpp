@@ -177,10 +177,10 @@ extern "C"
 			Plugin::m_counter++;
 		};
 
-		for(int i=0;i<argc;i++)
-		{
-			cout << i << ": \t" << argv[i] << endl;
-		};
+		//for(int i=0;i<argc;i++)
+		//{
+		//	cout << i << ": \t" << argv[i] << endl;
+		//};
 
 		return new Plugin(argc,argv);
 	};

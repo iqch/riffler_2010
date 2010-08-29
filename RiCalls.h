@@ -15,8 +15,11 @@
 
 #define DEFINE_RICALL(call) PyObject* _Ri##call(PyObject *self, PyObject *args)
 
-//PyObject* _RiFrameBegin(PyObject *self, PyObject *args);
+// ONE INT
 DEFINE_RICALL(FrameBegin);
+DEFINE_RICALL(Sides);
+
+// PLAIN
 DEFINE_RICALL(FrameEnd);
 DEFINE_RICALL(WorldBegin);
 DEFINE_RICALL(WorldEnd);
@@ -49,11 +52,25 @@ DEFINE_RICALL(EditEnd);
 DEFINE_RICALL(EditAttributeEnd);
 DEFINE_RICALL(EditWorldEnd);
 
+// ONE FLOAT
+DEFINE_RICALL(FrameAspectRatio);
+DEFINE_RICALL(PixelVariance);
+DEFINE_RICALL(ShadingRate);
+DEFINE_RICALL(RelativeDetail);
+DEFINE_RICALL(Perspective);
+
+// ONE COLOR
+DEFINE_RICALL(Color);
+DEFINE_RICALL(Opacity);
+
 #define RI_METHOD(method) {#method, _Ri##method, METH_VARARGS,""}
 
 static PyMethodDef MethodTable[] = {
-	//{"FrameBegin", _RiFrameBegin, METH_VARARGS,""},
+	// ONE INT
 	RI_METHOD(FrameBegin),
+	RI_METHOD(Sides),
+	
+	// PLIAN
 	RI_METHOD(FrameEnd),
 
 	RI_METHOD(WorldBegin),
@@ -86,6 +103,17 @@ static PyMethodDef MethodTable[] = {
 	RI_METHOD(EditEnd),
 	RI_METHOD(EditAttributeEnd),
 	RI_METHOD(EditWorldEnd),
+
+	// ONE FLOAT
+	RI_METHOD(FrameAspectRatio),
+	RI_METHOD(PixelVariance),
+	RI_METHOD(ShadingRate),
+	RI_METHOD(RelativeDetail),
+	RI_METHOD(Perspective),
+
+	// ONE COLOR
+	RI_METHOD(Color),
+	RI_METHOD(Opacity),
 
 	{NULL, NULL, 0, NULL}
 };
