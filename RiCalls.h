@@ -6,7 +6,7 @@
 *	RiCalls.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module header
 *
-*	Version: 0.2
+*	Version: 0.3
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -63,6 +63,56 @@ DEFINE_RICALL(Perspective);
 DEFINE_RICALL(Color);
 DEFINE_RICALL(Opacity);
 
+// BOOLEAN
+DEFINE_RICALL(Matte);
+
+// STRINGS
+DEFINE_RICALL(ShadingInterpolation);
+DEFINE_RICALL(SolidBegin);
+DEFINE_RICALL(EditAttributeBegin);
+DEFINE_RICALL(Orientation);
+DEFINE_RICALL(CoordSysTransform);
+DEFINE_RICALL(CoordinateSystem);
+DEFINE_RICALL(ScopedCoordinateSystem);
+DEFINE_RICALL(System);
+
+// POLY FLOATS
+
+// 2
+DEFINE_RICALL(Clipping);
+DEFINE_RICALL(Shutter);
+DEFINE_RICALL(Exposure);
+DEFINE_RICALL(PixelSamples);
+
+// 3
+DEFINE_RICALL(Scale);
+DEFINE_RICALL(DepthOfField);
+DEFINE_RICALL(Translate);
+
+// 4
+DEFINE_RICALL(CropWindow);
+DEFINE_RICALL(ScreenWindow);
+DEFINE_RICALL(DetailRange);
+DEFINE_RICALL(Rotate);
+
+// 6
+DEFINE_RICALL(ClippingPlane);
+
+// 7
+DEFINE_RICALL(Skew);
+
+// 8
+DEFINE_RICALL(TextureCoordinates);
+
+// BOUNDS
+DEFINE_RICALL(Bound);
+DEFINE_RICALL(Detail);
+
+// MATRICIES
+DEFINE_RICALL(ConcatTransform);
+DEFINE_RICALL(Transform);
+
+// TABLE
 #define RI_METHOD(method) {#method, _Ri##method, METH_VARARGS,""}
 
 static PyMethodDef MethodTable[] = {
@@ -115,5 +165,55 @@ static PyMethodDef MethodTable[] = {
 	RI_METHOD(Color),
 	RI_METHOD(Opacity),
 
+	// BOOLEAN
+	RI_METHOD(Matte),
+
+	// STRINGS
+	RI_METHOD(ShadingInterpolation),
+	RI_METHOD(SolidBegin),
+	RI_METHOD(EditAttributeBegin),
+	RI_METHOD(Orientation),
+	RI_METHOD(CoordSysTransform),
+	RI_METHOD(CoordinateSystem),
+	RI_METHOD(ScopedCoordinateSystem),
+	RI_METHOD(System),
+
+	// POLY FLOATS
+
+	// 2
+	RI_METHOD(Clipping),
+	RI_METHOD(Shutter),
+	RI_METHOD(Exposure),
+	RI_METHOD(PixelSamples),
+
+	// 3
+	RI_METHOD(Scale),
+	RI_METHOD(DepthOfField),
+	RI_METHOD(Translate),
+
+	// 4
+	RI_METHOD(CropWindow),
+	RI_METHOD(ScreenWindow),
+	RI_METHOD(DetailRange),
+	RI_METHOD(Rotate),
+
+	// 6
+	RI_METHOD(ClippingPlane),
+
+	// 7
+	RI_METHOD(Skew),
+
+	// 8
+	RI_METHOD(TextureCoordinates),
+
+	// BOUNDS
+	RI_METHOD(Bound),
+	RI_METHOD(Detail),
+
+	// MATRICIES
+	RI_METHOD(ConcatTransform),
+	RI_METHOD(Transform),
+
+	// END
 	{NULL, NULL, 0, NULL}
 };

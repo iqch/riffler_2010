@@ -4,9 +4,9 @@
 
 /*
 *	Riffler.h - RenderMan DSO Rif-filter for using python scripts
-*  for filtering. Filter realization source
+*  for filtering. Filter realization source - Callbacks
 *
-*	Version: 0.2
+*	Version: 0.3
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -78,6 +78,84 @@ FORWARD_FLOAT(Perspective);
 
 FORWARD_COLOR(Color);
 FORWARD_COLOR(Opacity);
+
+// BOOLEAN
+CALLBACKFN(Matte)(RtBoolean onoff)
+{
+	PyObject* pResult = PyObject_CallFunction(_MatteFunc, "i", (onoff == 0 ? 0 : 1));
+	Py_XDECREF(pResult);
+};
+
+// STRINGS
+#define FORWARD_STRING(callback) CALLBACKFN(callback)(RtToken v) { PyObject* pResult = PyObject_CallFunction(_##callback##Func, "s", v); Py_XDECREF(pResult); };
+
+FORWARD_STRING(ShadingInterpolation);
+FORWARD_STRING(SolidBegin);
+FORWARD_STRING(EditAttributeBegin);
+FORWARD_STRING(Orientation);
+FORWARD_STRING(CoordSysTransform);
+FORWARD_STRING(CoordinateSystem);
+FORWARD_STRING(ScopedCoordinateSystem);
+FORWARD_STRING(System);
+
+// POLY-FLOATS
+
+#define POLY_FLOATS2(callback) CALLBACKFN(callback)(RtFloat v1, RtFloat v2) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "ff", v1, v2);	Py_XDECREF(pResult); };
+
+POLY_FLOATS2(Clipping);
+POLY_FLOATS2(Shutter);
+POLY_FLOATS2(Exposure);
+POLY_FLOATS2(PixelSamples);
+
+#define POLY_FLOATS3(callback) CALLBACKFN(callback)(RtFloat v1, RtFloat v2, RtFloat v3) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "fff", v1, v2, v3);	Py_XDECREF(pResult); };
+
+POLY_FLOATS3(Scale);
+POLY_FLOATS3(DepthOfField);
+POLY_FLOATS3(Translate);
+
+#define POLY_FLOATS4(callback) CALLBACKFN(callback)(RtFloat v1, RtFloat v2, RtFloat v3, RtFloat v4) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "ffff", v1, v2, v3, v4);	Py_XDECREF(pResult); };
+
+POLY_FLOATS4(CropWindow);
+POLY_FLOATS4(ScreenWindow);
+POLY_FLOATS4(DetailRange);
+POLY_FLOATS4(Rotate);
+
+#define POLY_FLOATS6(callback) CALLBACKFN(callback)(RtFloat v1, RtFloat v2, RtFloat v3, RtFloat v4, RtFloat v5, RtFloat v6) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "ffffff", v1, v2, v3, v4, v5, v6);	Py_XDECREF(pResult); };
+
+POLY_FLOATS6(ClippingPlane);
+
+#define POLY_FLOATS7(callback) CALLBACKFN(callback)(RtFloat v1, RtFloat v2, RtFloat v3, RtFloat v4, RtFloat v5, RtFloat v6, RtFloat v7) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "fffffff", v1, v2, v3, v4, v5, v6, v7);	Py_XDECREF(pResult); };
+
+POLY_FLOATS7(Skew);
+
+#define POLY_FLOATS8(callback) CALLBACKFN(callback)(RtFloat v1, RtFloat v2, RtFloat v3, RtFloat v4, RtFloat v5, RtFloat v6, RtFloat v7, RtFloat v8) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "ffffffff", v1, v2, v3, v4, v5, v6, v7, v8);	Py_XDECREF(pResult); };
+
+POLY_FLOATS8(TextureCoordinates);
+
+// BOUNDS
+#define BOUNDS(callback) CALLBACKFN(callback)(RtBound b) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "((ff)(ff)(ff))",b[0],b[1],b[2],b[3],b[4],b[5]);	Py_XDECREF(pResult); };
+
+BOUNDS(Bound);
+BOUNDS(Detail);
+
+// MATRICES
+
+#define MATRICES(callback) CALLBACKFN(callback)(RtMatrix b) \
+{ PyObject* pResult = PyObject_CallFunction(_##callback##Func, "((ffff)(ffff)(ffff)(ffff))", \
+		b[0][0],b[0][1],b[0][2],b[0][3],	\
+		b[1][0],b[1][1],b[1][2],b[1][3],	\
+		b[2][0],b[2][1],b[2][2],b[2][3],	\
+		b[3][0],b[3][1],b[3][2],b[3][3]);	Py_XDECREF(pResult); };
+
+MATRICES(ConcatTransform);
+MATRICES(Transform);
 
 //template<class T> RtVoid	Riffler<T>::_FrameBegin
 //CALLBACKFN(FrameBegin)(RtInt frame)

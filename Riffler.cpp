@@ -6,7 +6,7 @@
 *	Riffler.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Filter realization source
 *
-*	Version: 0.2
+*	Version: 0.3
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -68,6 +68,56 @@ DEFINE_CALLBACKFN(Perspective);
 // ONE COLOR
 DEFINE_CALLBACKFN(Color);
 DEFINE_CALLBACKFN(Opacity);
+
+// BOOLEAN
+DEFINE_CALLBACKFN(Matte);
+
+// STRINGS
+DEFINE_CALLBACKFN(ShadingInterpolation);
+DEFINE_CALLBACKFN(SolidBegin);
+DEFINE_CALLBACKFN(EditAttributeBegin);
+DEFINE_CALLBACKFN(Orientation);
+DEFINE_CALLBACKFN(CoordSysTransform);
+DEFINE_CALLBACKFN(CoordinateSystem);
+DEFINE_CALLBACKFN(ScopedCoordinateSystem);
+DEFINE_CALLBACKFN(System);
+
+// POLY FLOATS
+
+// 2
+DEFINE_CALLBACKFN(Clipping);
+DEFINE_CALLBACKFN(Shutter);
+DEFINE_CALLBACKFN(Exposure);
+DEFINE_CALLBACKFN(PixelSamples);
+
+// 3
+DEFINE_CALLBACKFN(Scale);
+DEFINE_CALLBACKFN(DepthOfField);
+DEFINE_CALLBACKFN(Translate);
+
+// 4
+DEFINE_CALLBACKFN(CropWindow);
+DEFINE_CALLBACKFN(ScreenWindow);
+DEFINE_CALLBACKFN(DetailRange);
+DEFINE_CALLBACKFN(Rotate);
+
+// 6
+DEFINE_CALLBACKFN(ClippingPlane);
+
+// 7
+DEFINE_CALLBACKFN(Skew);
+
+// 8
+DEFINE_CALLBACKFN(TextureCoordinates);
+
+// BOUNDS
+DEFINE_CALLBACKFN(Bound);
+DEFINE_CALLBACKFN(Detail);
+
+// MATRICIES
+DEFINE_CALLBACKFN(ConcatTransform);
+DEFINE_CALLBACKFN(Transform);
+
 
 template class Riffler<bool>;
 template class Riffler<int>;

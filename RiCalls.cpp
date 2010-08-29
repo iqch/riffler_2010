@@ -6,7 +6,7 @@
 *	RiCalls.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module source
 *
-*	Version: 0.2
+*	Version: 0.3
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -88,3 +88,181 @@ ONE_FLOAT_CALL(Perspective);
 
 ONE_COLOR_CALL(Color);
 ONE_COLOR_CALL(Opacity);
+
+// BOOLEAN
+
+DEFINE_RICALL(Matte)
+{
+	int value = 0;
+	if(!PyArg_ParseTuple(args, "i", &value)) FAIL;
+	RiMatte(value == 0 ? 0 : 1);
+	SUCCESS 
+};
+
+// STRINGS
+#define ONE_TOKEN_CALL(method) DEFINE_RICALL(method) { const char* v; if(!PyArg_ParseTuple(args, "s", &v)) FAIL; Ri##method(v); SUCCESS };
+
+ONE_TOKEN_CALL(ShadingInterpolation);
+ONE_TOKEN_CALL(SolidBegin);
+ONE_TOKEN_CALL(EditAttributeBegin);
+ONE_TOKEN_CALL(Orientation);
+ONE_TOKEN_CALL(CoordSysTransform);
+ONE_TOKEN_CALL(CoordinateSystem);
+ONE_TOKEN_CALL(ScopedCoordinateSystem);
+ONE_TOKEN_CALL(System);
+
+// POLY-FLOATS
+
+// 2
+#define TWO_FLOATS_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* v0 =  PyTuple_GetItem(args,0);		\
+	PyObject* v1 =  PyTuple_GetItem(args,1);		\
+	Ri##method(PyFloat_AsDouble(v0), PyFloat_AsDouble(v1)); \
+	SUCCESS \
+};
+
+TWO_FLOATS_CALL(Clipping);
+TWO_FLOATS_CALL(Shutter);
+TWO_FLOATS_CALL(Exposure);
+TWO_FLOATS_CALL(PixelSamples);
+
+// 3
+#define THREE_FLOATS_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* v0 =  PyTuple_GetItem(args,0);		\
+	PyObject* v1 =  PyTuple_GetItem(args,1);		\
+	PyObject* v2 =  PyTuple_GetItem(args,2);		\
+	Ri##method(PyFloat_AsDouble(v0), PyFloat_AsDouble(v1), PyFloat_AsDouble(v2)); \
+	SUCCESS \
+};
+
+THREE_FLOATS_CALL(Scale);
+THREE_FLOATS_CALL(DepthOfField);
+THREE_FLOATS_CALL(Translate);
+
+// 4
+#define FOUR_FLOATS_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* v0 =  PyTuple_GetItem(args,0);		\
+	PyObject* v1 =  PyTuple_GetItem(args,1);		\
+	PyObject* v2 =  PyTuple_GetItem(args,2);		\
+	PyObject* v3 =  PyTuple_GetItem(args,3);		\
+	Ri##method(	PyFloat_AsDouble(v0), PyFloat_AsDouble(v1),	\
+						PyFloat_AsDouble(v2), PyFloat_AsDouble(v3)); \
+	SUCCESS \
+};
+
+FOUR_FLOATS_CALL(CropWindow);
+FOUR_FLOATS_CALL(ScreenWindow);
+FOUR_FLOATS_CALL(DetailRange);
+FOUR_FLOATS_CALL(Rotate);
+
+// 6
+#define SIX_FLOATS_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* v0 =  PyTuple_GetItem(args,0);		\
+	PyObject* v1 =  PyTuple_GetItem(args,1);		\
+	PyObject* v2 =  PyTuple_GetItem(args,2);		\
+	PyObject* v3 =  PyTuple_GetItem(args,3);		\
+	PyObject* v4 =  PyTuple_GetItem(args,4);		\
+	PyObject* v5 =  PyTuple_GetItem(args,5);		\
+	Ri##method(	PyFloat_AsDouble(v0), PyFloat_AsDouble(v1),	\
+						PyFloat_AsDouble(v2), PyFloat_AsDouble(v3),	\
+						PyFloat_AsDouble(v4), PyFloat_AsDouble(v5)); \
+	SUCCESS \
+};
+
+SIX_FLOATS_CALL(ClippingPlane);
+
+// 7
+#define SEVEN_FLOATS_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* v0 =  PyTuple_GetItem(args,0);		\
+	PyObject* v1 =  PyTuple_GetItem(args,1);		\
+	PyObject* v2 =  PyTuple_GetItem(args,2);		\
+	PyObject* v3 =  PyTuple_GetItem(args,3);		\
+	PyObject* v4 =  PyTuple_GetItem(args,4);		\
+	PyObject* v5 =  PyTuple_GetItem(args,5);		\
+	PyObject* v6 =  PyTuple_GetItem(args,6);		\
+	Ri##method(	PyFloat_AsDouble(v0), PyFloat_AsDouble(v1),	\
+						PyFloat_AsDouble(v2), PyFloat_AsDouble(v3),	\
+						PyFloat_AsDouble(v4), PyFloat_AsDouble(v5),	\
+						PyFloat_AsDouble(v6)); \
+	SUCCESS \
+};
+
+SEVEN_FLOATS_CALL(Skew);
+
+// 8
+#define EIGHT_FLOATS_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* v0 =  PyTuple_GetItem(args,0);		\
+	PyObject* v1 =  PyTuple_GetItem(args,1);		\
+	PyObject* v2 =  PyTuple_GetItem(args,2);		\
+	PyObject* v3 =  PyTuple_GetItem(args,3);		\
+	PyObject* v4 =  PyTuple_GetItem(args,4);		\
+	PyObject* v5 =  PyTuple_GetItem(args,5);		\
+	PyObject* v6 =  PyTuple_GetItem(args,6);		\
+	PyObject* v7 =  PyTuple_GetItem(args,7);		\
+	Ri##method(	PyFloat_AsDouble(v0), PyFloat_AsDouble(v1),	\
+						PyFloat_AsDouble(v2), PyFloat_AsDouble(v3),	\
+						PyFloat_AsDouble(v4), PyFloat_AsDouble(v5),	\
+						PyFloat_AsDouble(v6), PyFloat_AsDouble(v7)); \
+	SUCCESS \
+};
+
+EIGHT_FLOATS_CALL(TextureCoordinates);
+
+// BOUNDS
+
+#define BOUNDS_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* A =  PyTuple_GetItem(args,0);	\
+	PyObject* bX =  PyTuple_GetItem(A,0);		\
+	PyObject* bY =  PyTuple_GetItem(A,1);		\
+	PyObject* bZ =  PyTuple_GetItem(A,2);		\
+	RtBound B;	\
+	B[0] = PyFloat_AsDouble(PyTuple_GetItem(bX,0));	\
+	B[1] = PyFloat_AsDouble(PyTuple_GetItem(bX,1));	\
+	B[2] = PyFloat_AsDouble(PyTuple_GetItem(bY,0));	\
+	B[3] = PyFloat_AsDouble(PyTuple_GetItem(bY,1));	\
+	B[4] = PyFloat_AsDouble(PyTuple_GetItem(bZ,0));	\
+	B[5] = PyFloat_AsDouble(PyTuple_GetItem(bZ,1));	\
+	Ri##method(B); SUCCESS \
+};
+
+BOUNDS_CALL(Bound);
+BOUNDS_CALL(Detail);
+
+// MATRICIES
+
+#define MATRICIES_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* A =  PyTuple_GetItem(args,0);	\
+	RtMatrix M;	\
+	PyObject* bX =  PyTuple_GetItem(A,0);		\
+	M[0][0] = PyFloat_AsDouble(PyTuple_GetItem(bX,0));	\
+	M[0][1] = PyFloat_AsDouble(PyTuple_GetItem(bX,1));	\
+	M[0][2] = PyFloat_AsDouble(PyTuple_GetItem(bX,2));	\
+	M[0][3] = PyFloat_AsDouble(PyTuple_GetItem(bX,3));	\
+	PyObject* bY =  PyTuple_GetItem(A,1);		\
+	M[1][0] = PyFloat_AsDouble(PyTuple_GetItem(bY,0));	\
+	M[1][1] = PyFloat_AsDouble(PyTuple_GetItem(bY,1));	\
+	M[1][2] = PyFloat_AsDouble(PyTuple_GetItem(bY,2));	\
+	M[1][3] = PyFloat_AsDouble(PyTuple_GetItem(bY,3));	\
+	PyObject* bZ =  PyTuple_GetItem(A,2);		\
+	M[2][0] = PyFloat_AsDouble(PyTuple_GetItem(bZ,0));	\
+	M[2][1] = PyFloat_AsDouble(PyTuple_GetItem(bZ,1));	\
+	M[2][2] = PyFloat_AsDouble(PyTuple_GetItem(bZ,2));	\
+	M[2][3] = PyFloat_AsDouble(PyTuple_GetItem(bZ,3));	\
+	PyObject* bW =  PyTuple_GetItem(A,3);		\
+	M[3][0] = PyFloat_AsDouble(PyTuple_GetItem(bW,0));	\
+	M[3][1] = PyFloat_AsDouble(PyTuple_GetItem(bW,1));	\
+	M[3][2] = PyFloat_AsDouble(PyTuple_GetItem(bW,2));	\
+	M[3][3] = PyFloat_AsDouble(PyTuple_GetItem(bW,3));	\
+	Ri##method(M); SUCCESS \
+};
+
+MATRICIES_CALL(ConcatTransform);
+MATRICIES_CALL(Transform);
