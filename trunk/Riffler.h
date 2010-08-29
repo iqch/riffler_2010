@@ -38,7 +38,11 @@ private:
 	T m_member;
 	// CATCHERS
 
+	// ONE INT
 	DECLARE_CALLBACK(FrameBegin)(RtInt frame);
+	DECLARE_CALLBACK(Sides)(RtInt sides);
+
+	// PLAIN
 	DECLARE_CALLBACK(FrameEnd)();
 
 	DECLARE_CALLBACK(WorldBegin)();
@@ -50,45 +54,73 @@ private:
 	DECLARE_CALLBACK(TransformBegin)();
 	DECLARE_CALLBACK(TransformEnd)();
 
-	//RtVoid  	_SolidBegin(RtToken operation);
 	DECLARE_CALLBACK(SolidEnd)();
 
 	//DECLARE_CALLBACK(ObjectBegin)();
 	DECLARE_CALLBACK(ObjectEnd)();
-	//RtVoid  	_ObjectInstance(RtObjectHandle handle);
 
-	//RtVoid  	_MotionBeginV(RtInt n, RtFloat times[]);
 	DECLARE_CALLBACK(MotionEnd)();
 
 	DECLARE_CALLBACK(Identity)();
 	
 	DECLARE_CALLBACK(ReverseOrientation)();
 
-	//RtArchiveHandle _ArchiveBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(ArchiveEnd)();
 
-	//RtVoid  	_IfBeginV(char *expr, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ElseIfV(char *expr, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(Else)();
 	DECLARE_CALLBACK(IfEnd)();
 
 
 	DECLARE_CALLBACK(ResourceBegin)();
 	DECLARE_CALLBACK(ResourceEnd)();
-	//RtVoid  	_EditBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(EditEnd)();
-	//EditAttributeBegin(RtToken name);
 	DECLARE_CALLBACK(EditAttributeEnd)();
-	//RtVoid	_EditWorldBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(EditWorldEnd)();
 
+	// ONE FLOAT
+	DECLARE_CALLBACK(FrameAspectRatio)(RtFloat aspect);
+	DECLARE_CALLBACK(PixelVariance)(RtFloat variation);
+	DECLARE_CALLBACK(ShadingRate)(RtFloat size);
+	DECLARE_CALLBACK(RelativeDetail)(RtFloat relativedetail);
+	DECLARE_CALLBACK(Perspective)(RtFloat fov);
+
+	// ONE COLOR
+	DECLARE_CALLBACK(Color)(RtColor color);
+	DECLARE_CALLBACK(Opacity)(RtColor color);
+
+	//RtVoid  	_Matte(RtBoolean onoff);
+
+	//RtVoid  	_ShadingInterpolation(RtToken type);
+	//RtVoid  	_SolidBegin(RtToken operation);
+	//RtVoid  	_EditAttributeBegin(RtToken name);
+	//RtVoid  	_Orientation(RtToken orientation);
+	//RtVoid  	_CoordSysTransform(RtToken space);
+	//RtVoid  	_CoordinateSystem(RtToken space);
+	//RtVoid		_ScopedCoordinateSystem(RtToken space);
+	//RtVoid		_System(char *cmdstring);
+
+	//RtVoid  	_Bound(RtBound bound);
+	//RtVoid  	_Detail(RtBound bound);
+
+	//RtVoid  	_ConcatTransform(RtMatrix transform);
+	//RtVoid  	_Transform(RtMatrix transform);
+	
+	//RtVoid		_ErrorHandler(RtErrorHandler);
+
+
+	//RtVoid  	_ObjectInstance(RtObjectHandle handle);
+	//RtVoid  	_MotionBeginV(RtInt n, RtFloat times[]);
+	//RtArchiveHandle _ArchiveBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_IfBeginV(char *expr, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_ElseIfV(char *expr, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_EditBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
+	//RtVoid	_EditWorldBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
 	//RtToken 	_Declare(char *name, char *declaration); // - little complex to startpoint
 	//RtVoid  	_Clipping(RtFloat hither, RtFloat yon);
 	//RtVoid  	_ClippingPlane(RtFloat Nx, RtFloat Ny, RtFloat Nz, RtFloat Px, RtFloat Py, RtFloat Pz);
 	//RtVoid  	_CropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
 	//RtVoid  	_DepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance);
 	//RtVoid  	_Format(RtInt xres, RtInt yres, RtFloat aspect);
-	//RtVoid  	_FrameAspectRatio(RtFloat aspect);
 	//RtVoid  	_ProjectionV(RtToken name, 	RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_ScreenWindow(RtFloat left, RtFloat right, RtFloat top, RtFloat bot);
 	//RtVoid  	_Shutter(RtFloat min, RtFloat max);
@@ -98,18 +130,14 @@ private:
 	//RtVoid  	_PixelFidelity(RtFloat variation); // OBSOLETE call: see RiPixelVariance
 	//RtVoid  	_PixelFilter(RtFilterFunc filterFunc, RtFloat xwidth, RtFloat ywidth);
 	//RtVoid  	_PixelSamples(RtFloat xsamples, RtFloat ysamples);
-	//RtVoid  	_PixelVariance(RtFloat variation);
 	//RtVoid  	_Quantize(RtToken type, RtInt one, RtInt min, RtInt max, RtFloat ampl);
 	//RtVoid  	_HiderV(RtToken type, RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_OptionV(RtToken name, RtInt, RtToken[], RtPointer[]);
 
 	//RtVoid  	_AttributeV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_Color(RtColor color);
-	//RtVoid  	_Opacity(RtColor color);
+
 	//RtVoid  	_TextureCoordinates(RtFloat s1, RtFloat t1, 	RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
-	//RtVoid  	_Matte(RtBoolean onoff);
-	//RtVoid  	_ShadingInterpolation(RtToken type);
-	//RtVoid  	_ShadingRate(RtFloat size);
+
 
 	//RtLightHandle	_AreaLightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]);
 	//RtLightHandle	_LightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]);
@@ -120,25 +148,17 @@ private:
 	//RtVoid  	_InteriorV(RtToken name, RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_SurfaceV(RtToken name,	RtInt, RtToken[], RtPointer[]);
 
-	//RtVoid  	_Bound(RtBound bound);
-	//RtVoid  	_Detail(RtBound bound);
-	//RtVoid  	_DetailRange(RtFloat minv, RtFloat lowtran, RtFloat uptran, RtFloat maxv);
-	//RtVoid  	_RelativeDetail(RtFloat relativedetail);
-	//RtVoid  	_GeometricApproximation(RtToken type, RtFloat value);
-	//RtVoid  	_Orientation(RtToken orientation);
-	//RtVoid  	_Sides(RtInt sides);
 
-	//RtVoid  	_ConcatTransform(RtMatrix transform);
-	//RtVoid  	_CoordSysTransform(RtToken space);
-	//RtVoid  	_CoordinateSystem(RtToken space);
-	//RtVoid	_ScopedCoordinateSystem(RtToken space);
+	//RtVoid  	_DetailRange(RtFloat minv, RtFloat lowtran, RtFloat uptran, RtFloat maxv);
+
 
 	
-	//RtVoid  	_Perspective(RtFloat fov);
+	//RtVoid  	_GeometricApproximation(RtToken type, RtFloat value);
+
+	
 	//RtVoid  	_Rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
 	//RtVoid  	_Scale(RtFloat sx, RtFloat sy, RtFloat sz);
 	//RtVoid  	_Skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
-	//RtVoid  	_Transform(RtMatrix transform);
 	//RtVoid  	_Translate(RtFloat dx, RtFloat dy, RtFloat dz);
 
 	//RtVoid  	_Basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
@@ -182,13 +202,11 @@ private:
 	//
 	//RtVoid  	_HierarchicalSubdivisionMeshV(RtToken mask, RtInt nf, 	RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[],	RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt, RtToken[], RtPointer[]);
 
-	//RtVoid	_System(char *cmdstring);
 
 	//RtVoid  	_ShaderV(RtToken name, RtToken handle, RtInt, RtToken[], RtPointer[]);
 
 	//RtVoid  	_CameraV(RtToken name, RtInt, RtToken[], RtPointer[]);
 
-	//RtVoid	_ErrorHandler(RtErrorHandler);
 
 	//RtVoid  	_PixelSampleImagerV(RtToken name, RtInt, RtToken[], RtPointer[]);
 };

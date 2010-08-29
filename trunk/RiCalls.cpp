@@ -17,25 +17,13 @@
 #define SUCCESS return Py_BuildValue("i", 1);
 #define FAIL return NULL;
 
-// FrameBegin
-//PyObject* _RiFrameBegin(PyObject *self, PyObject *args)
-DEFINE_RICALL(FrameBegin)
-{
-	RtInt frame = 0;
-	if(!PyArg_ParseTuple(args, "i", &frame)) FAIL;
+// ONE INT
+#define ONE_INT_CALL(method) DEFINE_RICALL(method) { 	RtInt value = 0; if(!PyArg_ParseTuple(args, "i", &value)) FAIL; Ri##method(value); SUCCESS };
 
-	RiFrameBegin(frame);
-	
-	SUCCESS
-};
+ONE_INT_CALL(FrameBegin)
+ONE_INT_CALL(Sides)
 
-//PyObject* _RiFrameEnd(PyObject *self, PyObject *args)
-//DEFINE_RICALL(FrameEnd)
-//{
-//	RiFrameEnd();
-//	SUCCESS
-//};
-
+// PLAIN
 #define PLAIN_CALL(method) DEFINE_RICALL(method) { Ri##method(); SUCCESS };
 
 PLAIN_CALL(FrameEnd)
@@ -70,3 +58,33 @@ PLAIN_CALL(ResourceEnd);
 PLAIN_CALL(EditEnd);
 PLAIN_CALL(EditAttributeEnd);
 PLAIN_CALL(EditWorldEnd);
+
+// ONE FLOAT
+#define ONE_FLOAT_CALL(method) DEFINE_RICALL(method) { 	RtFloat value = 0.0f; if(!PyArg_ParseTuple(args, "f", &value)) FAIL; Ri##method(value); SUCCESS };
+
+ONE_FLOAT_CALL(FrameAspectRatio);
+ONE_FLOAT_CALL(PixelVariance);
+ONE_FLOAT_CALL(ShadingRate);
+ONE_FLOAT_CALL(RelativeDetail);
+ONE_FLOAT_CALL(Perspective);
+
+// ONE COLOR
+//#define ONE_COLOR_CALL(method) DEFINE_RICALL(method) \
+//{ RtColor v = {0.0f,0.0f,0.0f}; \
+//if(!PyArg_ParseTuple(args, "f f f", v,v+1,v+2)) FAIL; \
+//Ri##method(v); SUCCESS };
+
+#define ONE_COLOR_CALL(method) DEFINE_RICALL(method) \
+{	\
+	PyObject* A =  PyTuple_GetItem(args,0);	\
+	PyObject* r =  PyTuple_GetItem(A,0);		\
+	PyObject* g =  PyTuple_GetItem(A,1);		\
+	PyObject* b =  PyTuple_GetItem(A,2);		\
+	double R = PyFloat_AsDouble(r);	\
+	double G = PyFloat_AsDouble(g);	\
+	double B = PyFloat_AsDouble(b);	\
+	RtColor c = { R, G, B }; Ri##method(c); SUCCESS \
+};
+
+ONE_COLOR_CALL(Color);
+ONE_COLOR_CALL(Opacity);
