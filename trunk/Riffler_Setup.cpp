@@ -6,7 +6,7 @@
 *	Riffler_Setup.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Filter realization source - Setup functions
 *
-*	Version: 0.3
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -19,6 +19,10 @@
 	if(PyCallable_Check(_##callback##Func)) ##callback = &Riffler::_##callback; \
 else Py_XDECREF(_##callback##Func);
 
+#define PARSE_CALLBACKV(callback) _##callback##VFunc = PyObject_GetAttrString(object, #callback); \
+	if(PyCallable_Check(_##callback##VFunc)) ##callback##V = &Riffler::_##callback##V; \
+else Py_XDECREF(_##callback##VFunc);
+
 template<class T> void Riffler<T>::Setup(PyObject* object)
 {
 	m_object = object;
@@ -27,17 +31,14 @@ template<class T> void Riffler<T>::Setup(PyObject* object)
 
 	// ONE INT
 	PARSE_CALLBACK(FrameBegin)
-		PARSE_CALLBACK(Sides)
-		//_FrameBeginFunc = PyObject_GetAttrString(object, "FrameBegin");
-		//#if(PyCallable_Check(_FrameBeginFunc)) FrameBegin = &Riffler::_FrameBegin;
-		//else Py_XDECREF(_FrameBeginFunc);
+	PARSE_CALLBACK(Sides)
 
-		// PLAIN
-		PARSE_CALLBACK(FrameEnd)
-		PARSE_CALLBACK(WorldBegin)
-		PARSE_CALLBACK(WorldEnd)
+	// PLAIN
+	PARSE_CALLBACK(FrameEnd)
+	PARSE_CALLBACK(WorldBegin)
+	PARSE_CALLBACK(WorldEnd)
 
-		PARSE_CALLBACK(AttributeBegin);
+	PARSE_CALLBACK(AttributeBegin);
 	PARSE_CALLBACK(AttributeEnd);
 
 	PARSE_CALLBACK(TransformBegin);
@@ -124,6 +125,28 @@ template<class T> void Riffler<T>::Setup(PyObject* object)
 	// MATRICES
 	PARSE_CALLBACK(ConcatTransform);
 	PARSE_CALLBACK(Transform);
+
+
+	// TOKEN-DICTIONARY
+	PARSE_CALLBACKV(EditBegin);
+	PARSE_CALLBACKV(IfBegin);
+	PARSE_CALLBACKV(ElseIf);
+	PARSE_CALLBACKV(Projection);
+	PARSE_CALLBACKV(Hider);
+	PARSE_CALLBACKV(Option);
+	PARSE_CALLBACKV(Attribute);
+	PARSE_CALLBACKV(Atmosphere);
+	PARSE_CALLBACKV(Displacement);
+	PARSE_CALLBACKV(Exterior);
+	PARSE_CALLBACKV(Interior);
+	PARSE_CALLBACKV(Surface);
+	PARSE_CALLBACKV(Geometry);
+	PARSE_CALLBACKV(Patch);
+	PARSE_CALLBACKV(DisplayChannel);
+	PARSE_CALLBACKV(Camera);
+	PARSE_CALLBACKV(PixelSampleImager);
+	PARSE_CALLBACKV(EditWorldBegin);
+	PARSE_CALLBACKV(Imager);
 };
 
 template class Riffler<bool>;

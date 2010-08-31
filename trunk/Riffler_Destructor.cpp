@@ -6,7 +6,7 @@
 *	Riffler.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Filter realization source - Destructor
 *
-*	Version: 0.3
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -114,6 +114,27 @@ template<class T> Riffler<T>::~Riffler()
 	// MATRICES
 	CLEAN_CALLBACK(ConcatTransform);
 	CLEAN_CALLBACK(Transform);
+
+	// TOKEN-DICTIONARY
+	CLEAN_CALLBACK(EditBeginV);
+	CLEAN_CALLBACK(IfBeginV);
+	CLEAN_CALLBACK(ElseIfV);
+	CLEAN_CALLBACK(ProjectionV);
+	CLEAN_CALLBACK(HiderV);
+	CLEAN_CALLBACK(OptionV);
+	CLEAN_CALLBACK(AttributeV);
+	CLEAN_CALLBACK(AtmosphereV);
+	CLEAN_CALLBACK(DisplacementV);
+	CLEAN_CALLBACK(ExteriorV);
+	CLEAN_CALLBACK(InteriorV);
+	CLEAN_CALLBACK(SurfaceV);
+	CLEAN_CALLBACK(GeometryV);
+	CLEAN_CALLBACK(PatchV);
+	CLEAN_CALLBACK(DisplayChannelV);
+	CLEAN_CALLBACK(CameraV);
+	CLEAN_CALLBACK(PixelSampleImagerV);
+	CLEAN_CALLBACK(EditWorldBeginV);
+	CLEAN_CALLBACK(ImagerV);
 
 	// FINALE
 	Py_XDECREF(m_object);
