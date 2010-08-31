@@ -6,7 +6,7 @@
 *	RiCalls.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module source
 *
-*	Version: 0.3
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -266,3 +266,40 @@ BOUNDS_CALL(Detail);
 
 MATRICIES_CALL(ConcatTransform);
 MATRICIES_CALL(Transform);
+
+// TOKEN-DICTIONARY
+
+bool CollectDictionary(PyObject* dict, int* n, RtToken* tk[], RtPointer* vl[]);
+
+#define TOKEN_DICTIONARY_CALL(method) DEFINE_RICALL(method) \
+{	\
+	RtToken name = PyString_AsString(PyTuple_GetItem(args,0));	\
+	PyObject* dict =  PyTuple_GetItem(args,1);		\
+	RtInt n = 0; \
+	RtToken* tk; \
+	RtPointer* vl; \
+	CollectDictionary(dict,&n, &tk,&vl);	\
+	Ri##method(name,n,tk,vl);	\
+	/* ...CLEANUP!*/ \
+	SUCCESS	\
+};
+
+TOKEN_DICTIONARY_CALL(EditBeginV);
+TOKEN_DICTIONARY_CALL(IfBeginV);
+TOKEN_DICTIONARY_CALL(ElseIfV);
+TOKEN_DICTIONARY_CALL(ProjectionV);
+TOKEN_DICTIONARY_CALL(HiderV);
+TOKEN_DICTIONARY_CALL(OptionV);
+TOKEN_DICTIONARY_CALL(AttributeV);
+TOKEN_DICTIONARY_CALL(AtmosphereV);
+TOKEN_DICTIONARY_CALL(DisplacementV);
+TOKEN_DICTIONARY_CALL(ExteriorV);
+TOKEN_DICTIONARY_CALL(InteriorV);
+TOKEN_DICTIONARY_CALL(SurfaceV);
+TOKEN_DICTIONARY_CALL(GeometryV);
+TOKEN_DICTIONARY_CALL(PatchV);
+TOKEN_DICTIONARY_CALL(DisplayChannelV);
+TOKEN_DICTIONARY_CALL(CameraV);
+TOKEN_DICTIONARY_CALL(PixelSampleImagerV);
+TOKEN_DICTIONARY_CALL(EditWorldBeginV);
+TOKEN_DICTIONARY_CALL(ImagerV);

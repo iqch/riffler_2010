@@ -6,7 +6,7 @@
 *	Riffler.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Filter realization header
 *
-*	Version: 0.3
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -138,25 +138,25 @@ private:
 	DECLARE_CALLBACK(Transform)(RtMatrix transform);
 
 	// TOKEN-DICTIONARY
-	//RtVoid  	_EditBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_IfBeginV(char *expr, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ElseIfV(char *expr, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ProjectionV(RtToken name, 	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_HiderV(RtToken type, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_OptionV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_AttributeV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_AtmosphereV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_DisplacementV(RtToken name,	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ExteriorV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_InteriorV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_SurfaceV(RtToken name,	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_GeometryV(RtToken type, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PatchV(RtToken type, RtInt, RtToken[], RtPointer[]);
-	//RtVoid		_DisplayChannelV(RtToken mode, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_CameraV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PixelSampleImagerV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid		_EditWorldBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ImagerV(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(EditBeginV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(IfBeginV)(RtToken expr, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(ElseIfV)(RtToken expr, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(ProjectionV)(RtToken name, 	RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(HiderV)(RtToken type, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(OptionV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(AttributeV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(AtmosphereV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(DisplacementV)(RtToken name,	RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(ExteriorV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(InteriorV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(SurfaceV)(RtToken name,	RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(GeometryV)(RtToken type, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(PatchV)(RtToken type, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(DisplayChannelV)(RtToken mode, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(CameraV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(PixelSampleImagerV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(EditWorldBeginV)(RtToken name, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(ImagerV)(RtToken name, RtInt, RtToken[], RtPointer[]);
 		
 	// DOU-TOKENS/DICT
 	//RtVoid  	_ResourceV(RtToken handle, RtToken type, RtInt, RtToken[], RtPointer[]);
@@ -194,7 +194,7 @@ private:
 	//RtVoid  	_MakeLatLongEnvironmentV(char *pic, char *tex, RtFilterFunc filterFunc,	RtFloat swidth, RtFloat twidth, RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_MakeShadowV(char *pic, char *tex, 	RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_MakeTextureV(char *pic, char *tex, 	RtToken swrap, RtToken twrap,	RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, RtInt, RtToken[], RtPointer[]);
-	//RtVoid	_MakeBrickMapV(RtInt, RtToken *, RtToken, RtInt, RtToken[], RtPointer[]);
+	//RtVoid		_MakeBrickMapV(RtInt, RtToken *, RtToken, RtInt, RtToken[], RtPointer[]);
 
 	// RECENT
 	//RtVoid  	_VArchiveRecord(RtToken type, char *format, va_list vap);

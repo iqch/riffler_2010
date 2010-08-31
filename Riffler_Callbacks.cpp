@@ -6,7 +6,7 @@
 *	Riffler.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Filter realization source - Callbacks
 *
-*	Version: 0.3
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -14,6 +14,8 @@
 
 #include "stdafx.h"
 #include "Riffler.h"
+
+bool ParseDictionary(PyObject* dict, int n, RtToken tk[], RtPointer vl[]);
 
 #define CALLBACKFN(callback) template<class T> RtVoid Riffler<T>::_##callback
 
@@ -156,6 +158,44 @@ BOUNDS(Detail);
 
 MATRICES(ConcatTransform);
 MATRICES(Transform);
+
+// TOKEN-DICTIONARY
+
+#define TOKEN_DICTIONARY(callback) CALLBACKFN(callback)(RtToken name, RtInt n, RtToken tk[], RtPointer vl[]) \
+{ \
+	PyObject* pArgs = PyTuple_New(2); \
+	PyObject* pName = Py_BuildValue("s",name);	\
+	PyTuple_SetItem(pArgs, 0, pName); \
+	PyObject* pDict = PyDict_New();	\
+	PyTuple_SetItem(pArgs, 1, pDict); \
+	ParseDictionary(pDict, n, tk, vl);	\
+	PyObject* pResult = PyObject_CallObject(_##callback##Func, pArgs); \
+	Py_XDECREF(pResult); \
+	Py_XDECREF(pArgs); \
+	Py_XDECREF(pName); \
+	Py_XDECREF(pDict); \
+};
+
+TOKEN_DICTIONARY(EditBeginV);
+TOKEN_DICTIONARY(IfBeginV);
+TOKEN_DICTIONARY(ElseIfV);
+TOKEN_DICTIONARY(ProjectionV);
+TOKEN_DICTIONARY(HiderV);
+TOKEN_DICTIONARY(OptionV);
+TOKEN_DICTIONARY(AttributeV);
+TOKEN_DICTIONARY(AtmosphereV);
+TOKEN_DICTIONARY(DisplacementV);
+TOKEN_DICTIONARY(ExteriorV);
+TOKEN_DICTIONARY(InteriorV);
+TOKEN_DICTIONARY(SurfaceV);
+TOKEN_DICTIONARY(GeometryV);
+TOKEN_DICTIONARY(PatchV);
+TOKEN_DICTIONARY(DisplayChannelV);
+TOKEN_DICTIONARY(CameraV);
+TOKEN_DICTIONARY(PixelSampleImagerV);
+TOKEN_DICTIONARY(EditWorldBeginV);
+TOKEN_DICTIONARY(ImagerV);
+
 
 //template<class T> RtVoid	Riffler<T>::_FrameBegin
 //CALLBACKFN(FrameBegin)(RtInt frame)

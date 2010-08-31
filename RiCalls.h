@@ -6,7 +6,7 @@
 *	RiCalls.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module header
 *
-*	Version: 0.3
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -112,8 +112,30 @@ DEFINE_RICALL(Detail);
 DEFINE_RICALL(ConcatTransform);
 DEFINE_RICALL(Transform);
 
+// TOKEN-DICTIONARY
+DEFINE_RICALL(EditBeginV);
+DEFINE_RICALL(IfBeginV);
+DEFINE_RICALL(ElseIfV);
+DEFINE_RICALL(ProjectionV);
+DEFINE_RICALL(HiderV);
+DEFINE_RICALL(OptionV);
+DEFINE_RICALL(AttributeV);
+DEFINE_RICALL(AtmosphereV);
+DEFINE_RICALL(DisplacementV);
+DEFINE_RICALL(ExteriorV);
+DEFINE_RICALL(InteriorV);
+DEFINE_RICALL(SurfaceV);
+DEFINE_RICALL(GeometryV);
+DEFINE_RICALL(PatchV);
+DEFINE_RICALL(DisplayChannelV);
+DEFINE_RICALL(CameraV);
+DEFINE_RICALL(PixelSampleImagerV);
+DEFINE_RICALL(EditWorldBeginV);
+DEFINE_RICALL(ImagerV);
+
 // TABLE
 #define RI_METHOD(method) {#method, _Ri##method, METH_VARARGS,""}
+#define RI_METHODV(method) {#method, _Ri##method##V, METH_VARARGS,""}
 
 static PyMethodDef MethodTable[] = {
 	// ONE INT
@@ -213,6 +235,27 @@ static PyMethodDef MethodTable[] = {
 	// MATRICIES
 	RI_METHOD(ConcatTransform),
 	RI_METHOD(Transform),
+
+	// TOKEN-DICTIONARY
+	RI_METHODV(EditBegin),
+	RI_METHODV(IfBegin),
+	RI_METHODV(ElseIf),
+	RI_METHODV(Projection),
+	RI_METHODV(Hider),
+	RI_METHODV(Option),
+	RI_METHODV(Attribute),
+	RI_METHODV(Atmosphere),
+	RI_METHODV(Displacement),
+	RI_METHODV(Exterior),
+	RI_METHODV(Interior),
+	RI_METHODV(Surface),
+	RI_METHODV(Geometry),
+	RI_METHODV(Patch),
+	RI_METHODV(DisplayChannel),
+	RI_METHODV(Camera),
+	RI_METHODV(PixelSampleImager),
+	RI_METHODV(EditWorldBegin),
+	RI_METHODV(Imager),
 
 	// END
 	{NULL, NULL, 0, NULL}

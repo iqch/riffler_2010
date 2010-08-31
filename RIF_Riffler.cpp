@@ -6,7 +6,7 @@
 *	RIF_Riffler.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Base source
 *
-*	Version: 0.25
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 

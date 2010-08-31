@@ -209,6 +209,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Riffler_ParseDictionary.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Riffler_Setup.cpp"
 				>
 			</File>

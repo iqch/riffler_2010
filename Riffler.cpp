@@ -6,7 +6,7 @@
 *	Riffler.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Filter realization source
 *
-*	Version: 0.3
+*	Version: 0.4
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -118,6 +118,26 @@ DEFINE_CALLBACKFN(Detail);
 DEFINE_CALLBACKFN(ConcatTransform);
 DEFINE_CALLBACKFN(Transform);
 
+// TOKEN-DICTIONARY
+DEFINE_CALLBACKFN(EditBeginV);
+DEFINE_CALLBACKFN(IfBeginV);
+DEFINE_CALLBACKFN(ElseIfV);
+DEFINE_CALLBACKFN(ProjectionV);
+DEFINE_CALLBACKFN(HiderV);
+DEFINE_CALLBACKFN(OptionV);
+DEFINE_CALLBACKFN(AttributeV);
+DEFINE_CALLBACKFN(AtmosphereV);
+DEFINE_CALLBACKFN(DisplacementV);
+DEFINE_CALLBACKFN(ExteriorV);
+DEFINE_CALLBACKFN(InteriorV);
+DEFINE_CALLBACKFN(SurfaceV);
+DEFINE_CALLBACKFN(GeometryV);
+DEFINE_CALLBACKFN(PatchV);
+DEFINE_CALLBACKFN(DisplayChannelV);
+DEFINE_CALLBACKFN(CameraV);
+DEFINE_CALLBACKFN(PixelSampleImagerV);
+DEFINE_CALLBACKFN(EditWorldBeginV);
+DEFINE_CALLBACKFN(ImagerV);
 
 template class Riffler<bool>;
 template class Riffler<int>;
