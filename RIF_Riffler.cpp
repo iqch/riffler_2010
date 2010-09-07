@@ -151,7 +151,10 @@ Plugin::~Plugin()
 
 	// ...HOPING, RIF FILTERS ARE DESTROYED NOT IN PARALLEL
 	Plugin::m_counter--;
-	if(m_counter == 0) Py_Finalize();
+	if(m_counter == 0)
+	{
+		//Py_Finalize();
+	}
 };
 
 RifFilter& Plugin::GetFilter()

@@ -269,7 +269,8 @@ MATRICIES_CALL(Transform);
 
 // TOKEN-DICTIONARY
 
-bool CollectDictionary(PyObject* dict, int* n, RtToken* tk[], RtPointer* vl[]);
+bool CollectDictionary(PyObject* dict, int* n, RtToken** tk, RtPointer** vl);
+bool DisposeTKVL(int n, RtToken* tk, RtPointer* vl);
 
 #define TOKEN_DICTIONARY_CALL(method) DEFINE_RICALL(method) \
 {	\
@@ -278,9 +279,8 @@ bool CollectDictionary(PyObject* dict, int* n, RtToken* tk[], RtPointer* vl[]);
 	RtInt n = 0; \
 	RtToken* tk; \
 	RtPointer* vl; \
-	CollectDictionary(dict,&n, &tk,&vl);	\
-	Ri##method(name,n,tk,vl);	\
-	/* ...CLEANUP!*/ \
+	if(CollectDictionary(dict,&n, &tk,&vl))	Ri##method(name,n,tk,vl);	\
+	DisposeTKVL(n,tk,vl); \
 	SUCCESS	\
 };
 
