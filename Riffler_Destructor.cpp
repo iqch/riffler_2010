@@ -32,7 +32,7 @@ template<class T> Riffler<T>::~Riffler()
 	CLEAN_CALLBACK(SolidEnd);
 
 	//CLEAN_CALLBACK(ObjectBegin);
-	CLEAN_CALLBACK(ObjectEnd);
+	//CLEAN_CALLBACK(ObjectEnd);
 
 	CLEAN_CALLBACK(MotionEnd);
 
@@ -135,6 +135,14 @@ template<class T> Riffler<T>::~Riffler()
 	CLEAN_CALLBACK(PixelSampleImagerV);
 	CLEAN_CALLBACK(EditWorldBeginV);
 	CLEAN_CALLBACK(ImagerV);
+
+	// DUO-TOKENS/DICT
+	CLEAN_CALLBACK(ResourceV);
+	CLEAN_CALLBACK(ShaderV);
+
+	// DICT WITH HANDLES
+	CLEAN_CALLBACK(ArchiveBeginV);
+	CLEAN_CALLBACK(LightSourceV);
 
 	// FINALE
 	Py_XDECREF(m_object);

@@ -35,7 +35,7 @@ DEFINE_CALLBACKFN(TransformEnd);
 DEFINE_CALLBACKFN(SolidEnd);
 
 //DEFINE_CALLBACKFN(ObjectBegin);
-DEFINE_CALLBACKFN(ObjectEnd);
+//DEFINE_CALLBACKFN(ObjectEnd);
 
 DEFINE_CALLBACKFN(MotionEnd);
 
@@ -138,6 +138,14 @@ DEFINE_CALLBACKFN(CameraV);
 DEFINE_CALLBACKFN(PixelSampleImagerV);
 DEFINE_CALLBACKFN(EditWorldBeginV);
 DEFINE_CALLBACKFN(ImagerV);
+
+// DUO-TOKENS/DICT
+DEFINE_CALLBACKFN(ResourceV);
+DEFINE_CALLBACKFN(ShaderV);
+
+// DICT WITH HANDLES
+DEFINE_CALLBACKFN(ArchiveBeginV);
+DEFINE_CALLBACKFN(LightSourceV);
 
 template class Riffler<bool>;
 template class Riffler<int>;

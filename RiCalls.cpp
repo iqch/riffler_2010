@@ -40,7 +40,7 @@ PLAIN_CALL(TransformEnd);
 PLAIN_CALL(SolidEnd);
 
 //FORWARD_PLAIN(ObjectBegin);
-PLAIN_CALL(ObjectEnd);
+//PLAIN_CALL(ObjectEnd);
 
 PLAIN_CALL(MotionEnd);
 
@@ -303,3 +303,24 @@ TOKEN_DICTIONARY_CALL(CameraV);
 TOKEN_DICTIONARY_CALL(PixelSampleImagerV);
 TOKEN_DICTIONARY_CALL(EditWorldBeginV);
 TOKEN_DICTIONARY_CALL(ImagerV);
+
+// DUO-TOKENS/DICT
+#define DUO_TOKEN_DICTIONARY_CALL(method) DEFINE_RICALL(method) \
+{	\
+	RtToken one = PyString_AsString(PyTuple_GetItem(args,0));	\
+	RtToken two = PyString_AsString(PyTuple_GetItem(args,1));	\
+	PyObject* dict =  PyTuple_GetItem(args,2);		\
+	RtInt n = 0; \
+	RtToken* tk; \
+	RtPointer* vl; \
+	if(CollectDictionary(dict,&n, &tk,&vl))	Ri##method(one, two,n,tk,vl);	\
+	DisposeTKVL(n,tk,vl); \
+	SUCCESS	\
+};
+
+DUO_TOKEN_DICTIONARY_CALL(ResourceV);
+DUO_TOKEN_DICTIONARY_CALL(ShaderV);
+
+// DICT WITH HANDLES == ONE TOKENS WITH DICT
+TOKEN_DICTIONARY_CALL(ArchiveBeginV);
+TOKEN_DICTIONARY_CALL(LightSourceV);

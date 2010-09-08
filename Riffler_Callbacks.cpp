@@ -35,7 +35,7 @@ FORWARD_PLAIN(TransformEnd);
 FORWARD_PLAIN(SolidEnd);
 
 //FORWARD_PLAIN(ObjectBegin);
-FORWARD_PLAIN(ObjectEnd);
+//FORWARD_PLAIN(ObjectEnd);
 
 FORWARD_PLAIN(MotionEnd);
 
@@ -160,7 +160,6 @@ MATRICES(ConcatTransform);
 MATRICES(Transform);
 
 // TOKEN-DICTIONARY
-
 #define TOKEN_DICTIONARY(callback) CALLBACKFN(callback)(RtToken name, RtInt n, RtToken tk[], RtPointer vl[]) \
 { \
 	PyObject* pArgs = PyTuple_New(2); \
@@ -196,25 +195,65 @@ TOKEN_DICTIONARY(PixelSampleImagerV);
 TOKEN_DICTIONARY(EditWorldBeginV);
 TOKEN_DICTIONARY(ImagerV);
 
+// DUO-TOKENS/DICT
+#define DUO_TOKEN_DICTIONARY(callback) CALLBACKFN(callback)(RtToken one, RtToken two, RtInt n, RtToken tk[], RtPointer vl[]) \
+{ \
+	PyObject* pArgs = PyTuple_New(3); \
+	PyObject* pOne = Py_BuildValue("s",one);	\
+	PyTuple_SetItem(pArgs, 0, pOne); \
+	PyObject* pTwo = Py_BuildValue("s",two);	\
+	PyTuple_SetItem(pArgs, 1, pTwo); \
+	PyObject* pDict = PyDict_New();	\
+	PyTuple_SetItem(pArgs, 2, pDict); \
+	ParseDictionary(pDict, n, tk, vl);	\
+	PyObject* pResult = PyObject_CallObject(_##callback##Func, pArgs); \
+	Py_XDECREF(pResult); \
+	Py_XDECREF(pArgs); \
+	Py_XDECREF(pOne); \
+	Py_XDECREF(pTwo); \
+	Py_XDECREF(pDict); \
+};
 
-//template<class T> RtVoid	Riffler<T>::_FrameBegin
-//CALLBACKFN(FrameBegin)(RtInt frame)
-//{
-//PyObject* pArgs = PyTuple_New(2);
+DUO_TOKEN_DICTIONARY(ResourceV);
+DUO_TOKEN_DICTIONARY(ShaderV);
 
-//PyTuple_SetItem(pArgs, 0, m_object);
+template<class T> RtArchiveHandle Riffler<T>::_ArchiveBeginV(RtToken name, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(2);
+	PyObject* pName = Py_BuildValue("s",name);
+	PyTuple_SetItem(pArgs, 0, pName);
+	PyObject* pDict = PyDict_New();
+	PyTuple_SetItem(pArgs, 1, pDict);
+	ParseDictionary(pDict, n, tk, vl);
+	PyObject* pResult = PyObject_CallObject(_ArchiveBeginVFunc, pArgs);
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+	Py_XDECREF(pName);
+	Py_XDECREF(pDict);
 
-//PyObject* pValue = PyInt_FromLong(frame);
-//PyTuple_SetItem(pArgs, 1, pValue);
+	// STUB
+	RtArchiveHandle h;
+	return h;
+};
 
-//PyObject* pResult = PyObject_CallObject(_FrameBeginFunc, pArgs);
+template<class T> RtLightHandle Riffler<T>::_LightSourceV(RtToken name, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(2);
+	PyObject* pName = Py_BuildValue("s",name);
+	PyTuple_SetItem(pArgs, 0, pName);
+	PyObject* pDict = PyDict_New();
+	PyTuple_SetItem(pArgs, 1, pDict);
+	ParseDictionary(pDict, n, tk, vl);
+	PyObject* pResult = PyObject_CallObject(_LightSourceVFunc, pArgs);
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+	Py_XDECREF(pName);
+	Py_XDECREF(pDict);
 
-//PyObject* pResult = PyObject_CallFunction(_FrameBeginFunc, "i", frame);
-//Py_XDECREF(pResult);
-
-//Py_DECREF(pArgs);
-//Py_DECREF(pValue);
-//};
+	// STUB
+	RtLightHandle h;
+	return h;
+};
 
 template class Riffler<bool>;
 template class Riffler<int>;
