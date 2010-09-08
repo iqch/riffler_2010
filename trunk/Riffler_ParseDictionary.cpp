@@ -62,7 +62,7 @@ bool ParseDictionary(PyObject* dict, int n, RtToken tk[], RtPointer vl[])
 				PyDict_SetItemString(dict, t, pArgs);
 			};
 			break;
-		case 's': // STRING
+		case 's': // STRING/SHADER
 			if(t[6] == ' ')
 			{
 				// JUST STRING
@@ -265,7 +265,7 @@ bool CollectDictionary(PyObject* dict, int* N, RtToken** tk, RtPointer** vl)
 				//PyDict_SetItemString(dict, t, pArgs);
 			};
 			break;
-		case 's': // STRING
+		case 's': // STRING/SHADER
 			if(t[6] == ' ')
 			{
 				// JUST STRING

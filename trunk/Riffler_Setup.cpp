@@ -47,7 +47,7 @@ template<class T> void Riffler<T>::Setup(PyObject* object)
 	PARSE_CALLBACK(SolidEnd);
 
 	//PARSE_CALLBACK(ObjectBegin);
-	PARSE_CALLBACK(ObjectEnd);
+	//PARSE_CALLBACK(ObjectEnd);
 
 	PARSE_CALLBACK(MotionEnd);
 
@@ -126,7 +126,6 @@ template<class T> void Riffler<T>::Setup(PyObject* object)
 	PARSE_CALLBACK(ConcatTransform);
 	PARSE_CALLBACK(Transform);
 
-
 	// TOKEN-DICTIONARY
 	PARSE_CALLBACKV(EditBegin);
 	PARSE_CALLBACKV(IfBegin);
@@ -147,6 +146,15 @@ template<class T> void Riffler<T>::Setup(PyObject* object)
 	PARSE_CALLBACKV(PixelSampleImager);
 	PARSE_CALLBACKV(EditWorldBegin);
 	PARSE_CALLBACKV(Imager);
+
+	// DUO-TOKENS/DICT
+	PARSE_CALLBACKV(Resource);
+	PARSE_CALLBACKV(Shader);
+
+	// DICT WITH HANDLES
+	PARSE_CALLBACKV(ArchiveBegin);
+	PARSE_CALLBACKV(LightSource);
+
 };
 
 template class Riffler<bool>;

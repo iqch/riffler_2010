@@ -33,7 +33,7 @@ DEFINE_RICALL(TransformEnd);
 DEFINE_RICALL(SolidEnd);
 
 //FORWARD_PLAIN(ObjectBegin);
-DEFINE_RICALL(ObjectEnd);
+//DEFINE_RICALL(ObjectEnd);
 
 DEFINE_RICALL(MotionEnd);
 
@@ -133,6 +133,14 @@ DEFINE_RICALL(PixelSampleImagerV);
 DEFINE_RICALL(EditWorldBeginV);
 DEFINE_RICALL(ImagerV);
 
+// DUO-TOKENS/DICT
+DEFINE_RICALL(ResourceV);
+DEFINE_RICALL(ShaderV);
+
+// DICT WITH HANDLES
+DEFINE_RICALL(ArchiveBeginV);
+DEFINE_RICALL(LightSourceV);
+
 // TABLE
 #define RI_METHOD(method) {#method, _Ri##method, METH_VARARGS,""}
 #define RI_METHODV(method) {#method, _Ri##method##V, METH_VARARGS,""}
@@ -157,7 +165,7 @@ static PyMethodDef MethodTable[] = {
 	RI_METHOD(SolidEnd),
 
 	//FORWARD_PLAIN(ObjectBegin);
-	RI_METHOD(ObjectEnd),
+	//RI_METHOD(ObjectEnd),
 
 	RI_METHOD(MotionEnd),
 
@@ -256,6 +264,14 @@ static PyMethodDef MethodTable[] = {
 	RI_METHODV(PixelSampleImager),
 	RI_METHODV(EditWorldBegin),
 	RI_METHODV(Imager),
+
+	// DUO-TOKENS/DICT
+	RI_METHODV(Resource),
+	RI_METHODV(Shader),
+
+	// DICT WITH HANDLES
+	RI_METHODV(ArchiveBegin),
+	RI_METHODV(LightSource),
 
 	// END
 	{NULL, NULL, 0, NULL}

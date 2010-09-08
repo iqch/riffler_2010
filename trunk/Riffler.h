@@ -56,9 +56,6 @@ private:
 
 	DECLARE_CALLBACK(SolidEnd)();
 
-	//DECLARE_CALLBACK(ObjectBegin)();
-	DECLARE_CALLBACK(ObjectEnd)();
-
 	DECLARE_CALLBACK(MotionEnd)();
 
 	DECLARE_CALLBACK(Identity)();
@@ -158,14 +155,16 @@ private:
 	DECLARE_CALLBACK(EditWorldBeginV)(RtToken name, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(ImagerV)(RtToken name, RtInt, RtToken[], RtPointer[]);
 		
-	// DOU-TOKENS/DICT
-	//RtVoid  	_ResourceV(RtToken handle, RtToken type, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ShaderV(RtToken name, RtToken handle, RtInt, RtToken[], RtPointer[]);
+	// DUO-TOKENS/DICT
+	DECLARE_CALLBACK(ResourceV)(RtToken handle, RtToken type, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(ShaderV)(RtToken name, RtToken handle, RtInt, RtToken[], RtPointer[]);
 
-	// HANDLES FROM TOKEN/DICT
-	//RtArchiveHandle _ArchiveBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtLightHandle	_AreaLightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]);
-	//RtLightHandle	_LightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]);
+	// TOKEN/DICT WITH HANDLES
+	static PyObject* _ArchiveBeginVFunc;
+	static RtArchiveHandle _ArchiveBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
+
+	static PyObject* _LightSourceVFunc;
+	static RtLightHandle	_LightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]);
 
 	// GPRIMS
 	//RtVoid  	_BlobbyV(RtInt nleaf, RtInt ninst, RtInt inst[], RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], RtInt, RtToken[], RtPointer[]);
@@ -197,19 +196,24 @@ private:
 	//RtVoid		_MakeBrickMapV(RtInt, RtToken *, RtToken, RtInt, RtToken[], RtPointer[]);
 
 	// RECENT
-	//RtVoid  	_VArchiveRecord(RtToken type, char *format, va_list vap);
 	//RtVoid  	_ReadArchiveV(RtToken name, RtArchiveCallback callback, RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_MotionBeginV(RtInt n, RtFloat times[]);
-	//RtVoid  	_ObjectInstance(RtObjectHandle handle);
-	//RtToken 	_Declare(char *name, char *declaration); // - little complex to startpoint
 	//RtVoid  	_Format(RtInt xres, RtInt yres, RtFloat aspect);
 	//RtVoid  	_DisplayV(char *name, RtToken type, RtToken mode, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PixelFidelity(RtFloat variation); // OBSOLETE call: see RiPixelVariance
 	//RtVoid  	_PixelFilter(RtFilterFunc filterFunc, RtFloat xwidth, RtFloat ywidth);
 	//RtVoid  	_Quantize(RtToken type, RtInt one, RtInt min, RtInt max, RtFloat ampl);
 	//RtVoid  	_Illuminate(RtLightHandle light, RtBoolean onoff);
 	//RtVoid  	_GeometricApproximation(RtToken type, RtFloat value);
 	//RtVoid  	_Basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
+
+	// TO SKIP
+	//RtVoid  	_VArchiveRecord(RtToken type, char *format, va_list vap);
+	//RtToken 	_Declare(char *name, char *declaration);
+	//RtVoid  	_PixelFidelity(RtFloat variation); // OBSOLETE call: see RiPixelVariance
 	//RtVoid		_ErrorHandler(RtErrorHandler);
+	//RtVoid  	_ObjectInstance(RtObjectHandle handle);
+	//DECLARE_CALLBACK(ObjectBegin)();
+	//DECLARE_CALLBACK(ObjectEnd)();
+	//RtLightHandle	_AreaLightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]); // USELESS
 };
 
