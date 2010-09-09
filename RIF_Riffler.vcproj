@@ -197,23 +197,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Riffler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Riffler_Callbacks.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Riffler_Destructor.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Riffler_ParseDictionary.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Riffler_Setup.cpp"
 				>
 			</File>
 		</Filter>
@@ -224,10 +208,6 @@
 			>
 			<File
 				RelativePath=".\RiCalls.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Riffler.h"
 				>
 			</File>
 			<File
