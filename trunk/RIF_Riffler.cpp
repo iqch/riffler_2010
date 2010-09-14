@@ -6,7 +6,7 @@
 *	RIF_Riffler.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Base source
 *
-*	Version: 0.6
+*	Version: 0.7
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -15,10 +15,7 @@
 
 #include "RiCalls.h"
 
-//#include "Riffler.h"
-
-#define DECLARE_CALLBACK(callback) /*static*/ PyObject* _##callback##Func; static RtVoid _##callback
-//#define DEFINE_CALLBACKFN(callback) PyObject* Riffler::_##callback##Func = NULL;
+#define DECLARE_CALLBACK(callback) PyObject* _##callback##Func; static RtVoid _##callback
 
 #define PARSE_CALLBACK(callback) _##callback##Func = PyObject_GetAttrString(m_filterobj, #callback); \
 	if(PyCallable_Check(_##callback##Func)) ##callback = &Riffler::_##callback; \
@@ -29,14 +26,6 @@ else { Py_XDECREF(_##callback##Func); };
 else Py_XDECREF(_##callback##VFunc);
 
 #define CLEAN_CALLBACK(callback) if(_##callback##Func != NULL) Py_XDECREF(_##callback##Func);
-
-//#define FILTERS_COUNT 2
-//
-//Riffler<bool> g_bR;
-//Riffler<int> g_iR;
-//
-//SetupLayer* g_FILTERS[FILTERS_COUNT] = { &g_bR, &g_iR };
-//int g_current = 0;
 
 class Riffler : public RifPlugin, public RifFilter
 {
@@ -50,13 +39,11 @@ public:
 	static unsigned int m_counter;
 protected:
 
-	//RifFilter* m_filter;
 	PyObject* m_module;
 	PyObject* m_filterobj;
 
 private:
-	//static PyObject* m_object;
-	//T m_member;
+
 	// CATCHERS
 
 	// ONE INT
@@ -181,10 +168,10 @@ private:
 	DECLARE_CALLBACK(ShaderV)(RtToken name, RtToken handle, RtInt, RtToken[], RtPointer[]);
 
 	// TOKEN/DICT WITH HANDLES
-	/*static*/ PyObject* _ArchiveBeginVFunc;
+	PyObject* _ArchiveBeginVFunc;
 	static RtArchiveHandle _ArchiveBeginV(RtToken name, RtInt, RtToken[], RtPointer[]);
 
-	/*static*/ PyObject* _LightSourceVFunc;
+	PyObject* _LightSourceVFunc;
 	static RtLightHandle	_LightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]);
 
 	// GPRIMS
@@ -241,21 +228,9 @@ private:
 unsigned int Riffler::m_counter = 0;
 
 Riffler::Riffler(int argc, char **argv)
-	//: m_filter(NULL)
 	: m_module(NULL)
 	, m_filterobj(NULL)
 {
-	// ...HOPING, RIF FILTERS ARE BUILT NOT IN PARALLEL
-
-	// AMOUNT CHECKING
-
-	//if(g_current == FILTERS_COUNT)
-	//{
-	//	cout << "RIFFLER: Excessive fiters count" << endl;
-	//	return;
-	//}
-
-	
 	// LOAD MODULE
 	if(argc < 1)
 	{
@@ -263,12 +238,8 @@ Riffler::Riffler(int argc, char **argv)
 		return;
 	};
 
-	//PyObject *pName = PyString_FromString(argv[0]);
-
 	//m_module = PyImport_Import(pName);
-
 	m_module = PyImport_ImportModuleNoBlock(argv[0]);
-	//Py_DECREF(pName);
 
 	if(m_module == NULL)
 	{
@@ -332,8 +303,6 @@ Riffler::Riffler(int argc, char **argv)
 	};
 
 	// SETUP AS FILTER
-	//m_filter = this;
-	//m_filter.ClientData = static_cast<void *>(m_filterobj);
 
 	// ONE INT
 	PARSE_CALLBACK(FrameBegin)
@@ -461,8 +430,6 @@ Riffler::Riffler(int argc, char **argv)
 	PARSE_CALLBACKV(ArchiveBegin);
 	PARSE_CALLBACKV(LightSource);
 
-	//g_FILTERS[g_current]->Setup(m_filterobj);
-	//g_current++;
 	int i=0;
 };
 
@@ -472,7 +439,6 @@ Riffler::~Riffler()
 	if(m_filterobj != NULL)
 	{
 		// PLAIN
-		//if(_FrameEndFunc != NULL) Py_XDECREF(_FrameEndFunc);
 		CLEAN_CALLBACK(FrameEnd)
 		CLEAN_CALLBACK(WorldBegin)
 		CLEAN_CALLBACK(WorldEnd)
@@ -600,11 +566,10 @@ Riffler::~Riffler()
 	};
 
 	// DESTROY
-	//if(m_filter != NULL) delete m_filter;
 	if(m_filterobj != NULL) Py_XDECREF(m_filterobj);
 	if(m_module != NULL) Py_XDECREF(m_module);
 
-	// ...HOPING, RIF FILTERS ARE DESTROYED NOT IN PARALLEL
+	// HOPING, RIF FILTERS ARE DESTROYED NOT IN PARALLEL
 	Riffler::m_counter--;
 	if(m_counter == 0)
 	{
@@ -623,6 +588,31 @@ extern "C"
 	{
 		if(Riffler::m_counter == 0)
 		{
+			// APPEND  RIFFLER_SCRIPTS_PATHS 
+			char* envpath = getenv("RIFFLER_SCRIPTS_PATH");
+
+			if(envpath != NULL)
+			{
+				char* pypath = getenv("PYTHONPATH");
+
+				char buff[4096];
+				memset(buff,0,4096);
+				if(pypath == NULL)
+				{
+					sprintf(buff,"PYTHONPATH=%s",envpath);
+				}
+				else
+				{
+#if _WIN32
+					char* dlm = ";";
+#else
+					char* dlm = ":";
+#endif
+					sprintf(buff,"PYTHONPATH=%s%s%s",envpath,dlm,pypath);
+				};
+				putenv(buff);
+			}
+
 			// PRIMARY SETUP
 			Py_Initialize();
 
@@ -708,7 +698,6 @@ FORWARD_FLOAT(Perspective);
 	Py_XDECREF(pResult); \
 	Py_XDECREF(pArgs); \
 };
-//	Py_XDECREF(pfArgs); \
 
 FORWARD_COLOR(Color);
 FORWARD_COLOR(Opacity);
@@ -806,8 +795,6 @@ MATRICES(Transform);
 	Py_XDECREF(pResult); \
 	Py_XDECREF(pArgs); \
 };
-//	Py_XDECREF(pName); \
-//	Py_XDECREF(pDict); \
 
 //CALLBACKFN(AttributeV)(RtToken name, RtInt n, RtToken tk[], RtPointer vl[])
 //{
@@ -859,9 +846,6 @@ TOKEN_DICTIONARY(ImagerV);
 	Py_XDECREF(pResult); \
 	Py_XDECREF(pArgs); \
 };
-//	Py_XDECREF(pOne); \
-//	Py_XDECREF(pTwo); \
-//	Py_XDECREF(pDict); \
 
 DUO_TOKEN_DICTIONARY(ResourceV);
 DUO_TOKEN_DICTIONARY(ShaderV);
@@ -878,11 +862,18 @@ RtArchiveHandle Riffler::_ArchiveBeginV(RtToken name, RtInt n, RtToken tk[], RtP
 	PyObject* pResult = PyObject_CallObject(filter->_ArchiveBeginVFunc, pArgs);
 	Py_XDECREF(pResult);
 	Py_XDECREF(pArgs);
-	//Py_XDECREF(pName);
-	//Py_XDECREF(pDict);
 
 	// STUB
-	RtArchiveHandle h;
+	for(int i=0;i<n;i++)
+	{
+		if(strcmp(tk[i],"__handleid") == 0)
+		{
+			RtArchiveHandle h = strdup((RtToken)vl[i]);
+			return h;
+		};
+	};
+	
+	RtArchiveHandle h = strdup(name);
 	return h;
 };
 
@@ -901,8 +892,6 @@ RtLightHandle Riffler::_LightSourceV(RtToken name, RtInt n, RtToken tk[], RtPoin
 
 	Py_XDECREF(pResult);
 	Py_XDECREF(pArgs);
-	//Py_XDECREF(pName);
-	//Py_XDECREF(pDict);
 
 	// STUB
 	for(int i=0;i<n;i++)

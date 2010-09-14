@@ -6,7 +6,7 @@
 *	RiCalls.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module source
 *
-*	Version: 0.6
+*	Version: 0.7
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -67,12 +67,6 @@ ONE_FLOAT_CALL(PixelVariance);
 ONE_FLOAT_CALL(ShadingRate);
 ONE_FLOAT_CALL(RelativeDetail);
 ONE_FLOAT_CALL(Perspective);
-
-// ONE COLOR
-//#define ONE_COLOR_CALL(method) DEFINE_RICALL(method) \
-//{ RtColor v = {0.0f,0.0f,0.0f}; \
-//if(!PyArg_ParseTuple(args, "f f f", v,v+1,v+2)) FAIL; \
-//Ri##method(v); SUCCESS };
 
 #define ONE_COLOR_CALL(method) DEFINE_RICALL(method) \
 {	\

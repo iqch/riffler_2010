@@ -6,7 +6,7 @@
 *	stadfx.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Common header
 *
-*	Version: 0.6
+*	Version: 0.7
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -14,8 +14,8 @@
 #pragma once
 
 #ifdef LINUX
-#define DLLEXPORT
-#define SIZEOF_VOID_P 8
+//#define DLLEXPORT
+//#define SIZEOF_VOID_P 8
 #else
 #define DLLEXPORT __declspec(dllexport)
 #endif
