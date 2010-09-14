@@ -6,7 +6,7 @@
 *	RiCalls.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module header
 *
-*	Version: 0.6
+*	Version: 0.7
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
