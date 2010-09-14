@@ -28,7 +28,7 @@ else { Py_XDECREF(_##callback##Func); };
 	if(PyCallable_Check(_##callback##VFunc)) ##callback##V = &Riffler::_##callback##V; \
 else Py_XDECREF(_##callback##VFunc);
 
-#define CLEAN_CALLBACK(callback) Py_XDECREF(_##callback##Func);
+#define CLEAN_CALLBACK(callback) if(_##callback##Func != NULL) Py_XDECREF(_##callback##Func);
 
 //#define FILTERS_COUNT 2
 //
@@ -50,7 +50,7 @@ public:
 	static unsigned int m_counter;
 protected:
 
-	RifFilter* m_filter;
+	//RifFilter* m_filter;
 	PyObject* m_module;
 	PyObject* m_filterobj;
 
@@ -241,12 +241,11 @@ private:
 unsigned int Riffler::m_counter = 0;
 
 Riffler::Riffler(int argc, char **argv)
-	: m_filter(NULL)
-	, m_module(NULL)
+	//: m_filter(NULL)
+	: m_module(NULL)
 	, m_filterobj(NULL)
 {
 	// ...HOPING, RIF FILTERS ARE BUILT NOT IN PARALLEL
-
 
 	// AMOUNT CHECKING
 
@@ -292,7 +291,7 @@ Riffler::Riffler(int argc, char **argv)
 	{
 		cout << "RIFFLER: script " << argv[0] << " does not contain 'plugin'-function" << endl;
 		if(PyErr_Occurred()) PyErr_Print();
-		Py_XDECREF(pFunc); // ?
+		Py_XDECREF(pFunc); // got 2 references
 		Py_DECREF(m_module); m_module = NULL;
 		return;
 	};
@@ -320,8 +319,7 @@ Riffler::Riffler(int argc, char **argv)
 	PyTuple_SetItem(pArgList, 0, pArgs);
 
 	m_filterobj = PyObject_CallObject(pFunc, pArgList);
-	Py_DECREF(pArgList);
-	Py_DECREF(pArgs);
+	Py_XDECREF(pArgList);
 	Py_XDECREF(pFunc);
 
 	if(m_filterobj == NULL)
@@ -333,8 +331,8 @@ Riffler::Riffler(int argc, char **argv)
 		return;
 	};
 
-	// SETUP FILTER
-	m_filter = this;
+	// SETUP AS FILTER
+	//m_filter = this;
 	//m_filter.ClientData = static_cast<void *>(m_filterobj);
 
 	// ONE INT
@@ -465,141 +463,146 @@ Riffler::Riffler(int argc, char **argv)
 
 	//g_FILTERS[g_current]->Setup(m_filterobj);
 	//g_current++;
+	int i=0;
 };
 
 Riffler::~Riffler()
 {
 	// CLEANUP
-	// PLAIN
-	CLEAN_CALLBACK(FrameEnd)
-	CLEAN_CALLBACK(WorldBegin)
-	CLEAN_CALLBACK(WorldEnd)
+	if(m_filterobj != NULL)
+	{
+		// PLAIN
+		//if(_FrameEndFunc != NULL) Py_XDECREF(_FrameEndFunc);
+		CLEAN_CALLBACK(FrameEnd)
+		CLEAN_CALLBACK(WorldBegin)
+		CLEAN_CALLBACK(WorldEnd)
 
-	CLEAN_CALLBACK(AttributeBegin);
-	CLEAN_CALLBACK(AttributeEnd);
+		CLEAN_CALLBACK(AttributeBegin);
+		CLEAN_CALLBACK(AttributeEnd);
 
-	CLEAN_CALLBACK(TransformBegin);
-	CLEAN_CALLBACK(TransformEnd);
+		CLEAN_CALLBACK(TransformBegin);
+		CLEAN_CALLBACK(TransformEnd);
 
-	CLEAN_CALLBACK(SolidEnd);
+		CLEAN_CALLBACK(SolidEnd);
 
-	//CLEAN_CALLBACK(ObjectBegin);
-	//CLEAN_CALLBACK(ObjectEnd);
+		//CLEAN_CALLBACK(ObjectBegin);
+		//CLEAN_CALLBACK(ObjectEnd);
 
-	CLEAN_CALLBACK(MotionEnd);
+		CLEAN_CALLBACK(MotionEnd);
 
-	CLEAN_CALLBACK(Identity);
+		CLEAN_CALLBACK(Identity);
 
-	CLEAN_CALLBACK(ReverseOrientation);
+		CLEAN_CALLBACK(ReverseOrientation);
 
-	CLEAN_CALLBACK(ArchiveEnd);
+		CLEAN_CALLBACK(ArchiveEnd);
 
-	CLEAN_CALLBACK(Else);
-	CLEAN_CALLBACK(IfEnd);
+		CLEAN_CALLBACK(Else);
+		CLEAN_CALLBACK(IfEnd);
 
-	CLEAN_CALLBACK(ResourceBegin);
-	CLEAN_CALLBACK(ResourceEnd);
-	CLEAN_CALLBACK(EditEnd);
-	CLEAN_CALLBACK(EditAttributeEnd);
-	CLEAN_CALLBACK(EditWorldEnd);
+		CLEAN_CALLBACK(ResourceBegin);
+		CLEAN_CALLBACK(ResourceEnd);
+		CLEAN_CALLBACK(EditEnd);
+		CLEAN_CALLBACK(EditAttributeEnd);
+		CLEAN_CALLBACK(EditWorldEnd);
 
-	// ONE INT
-	CLEAN_CALLBACK(FrameBegin)
+		// ONE INT
+		CLEAN_CALLBACK(FrameBegin)
 		CLEAN_CALLBACK(Sides)
 
 		// ONE FLOAT
 		CLEAN_CALLBACK(FrameAspectRatio);
-	CLEAN_CALLBACK(PixelVariance);
-	CLEAN_CALLBACK(ShadingRate);
-	CLEAN_CALLBACK(RelativeDetail);
-	CLEAN_CALLBACK(Perspective);
+		CLEAN_CALLBACK(PixelVariance);
+		CLEAN_CALLBACK(ShadingRate);
+		CLEAN_CALLBACK(RelativeDetail);
+		CLEAN_CALLBACK(Perspective);
 
-	// ONE COLOR
-	CLEAN_CALLBACK(Color);
-	CLEAN_CALLBACK(Opacity);
+		// ONE COLOR
+		CLEAN_CALLBACK(Color);
+		CLEAN_CALLBACK(Opacity);
 
-	// BOOLEAN
-	CLEAN_CALLBACK(Matte);
+		// BOOLEAN
+		CLEAN_CALLBACK(Matte);
 
-	// STRINGS
-	CLEAN_CALLBACK(ShadingInterpolation);
-	CLEAN_CALLBACK(SolidBegin);
-	CLEAN_CALLBACK(EditAttributeBegin);
-	CLEAN_CALLBACK(Orientation);
-	CLEAN_CALLBACK(CoordSysTransform);
-	CLEAN_CALLBACK(CoordinateSystem);
-	CLEAN_CALLBACK(ScopedCoordinateSystem);
-	CLEAN_CALLBACK(System);
+		// STRINGS
+		CLEAN_CALLBACK(ShadingInterpolation);
+		CLEAN_CALLBACK(SolidBegin);
+		CLEAN_CALLBACK(EditAttributeBegin);
+		CLEAN_CALLBACK(Orientation);
+		CLEAN_CALLBACK(CoordSysTransform);
+		CLEAN_CALLBACK(CoordinateSystem);
+		CLEAN_CALLBACK(ScopedCoordinateSystem);
+		CLEAN_CALLBACK(System);
 
-	// POLY-FLOATS
+		// POLY-FLOATS
 
-	// 2
-	CLEAN_CALLBACK(Clipping);
-	CLEAN_CALLBACK(Shutter);
-	CLEAN_CALLBACK(Exposure);
-	CLEAN_CALLBACK(PixelSamples);
+		// 2
+		CLEAN_CALLBACK(Clipping);
+		CLEAN_CALLBACK(Shutter);
+		CLEAN_CALLBACK(Exposure);
+		CLEAN_CALLBACK(PixelSamples);
 
-	// 3
-	CLEAN_CALLBACK(Scale);
-	CLEAN_CALLBACK(DepthOfField);
-	CLEAN_CALLBACK(Translate);
+		// 3
+		CLEAN_CALLBACK(Scale);
+		CLEAN_CALLBACK(DepthOfField);
+		CLEAN_CALLBACK(Translate);
 
-	// 4
-	CLEAN_CALLBACK(CropWindow);
-	CLEAN_CALLBACK(ScreenWindow);
-	CLEAN_CALLBACK(DetailRange);
-	CLEAN_CALLBACK(Rotate);
+		// 4
+		CLEAN_CALLBACK(CropWindow);
+		CLEAN_CALLBACK(ScreenWindow);
+		CLEAN_CALLBACK(DetailRange);
+		CLEAN_CALLBACK(Rotate);
 
-	// 6
-	CLEAN_CALLBACK(ClippingPlane);
+		// 6
+		CLEAN_CALLBACK(ClippingPlane);
 
-	// 7
-	CLEAN_CALLBACK(Skew);
+		// 7
+		CLEAN_CALLBACK(Skew);
 
-	// 8
-	CLEAN_CALLBACK(TextureCoordinates);
+		// 8
+		CLEAN_CALLBACK(TextureCoordinates);
 
-	// BOUNDS
-	CLEAN_CALLBACK(Bound);
-	CLEAN_CALLBACK(Detail);
+		// BOUNDS
+		CLEAN_CALLBACK(Bound);
+		CLEAN_CALLBACK(Detail);
 
-	// MATRICES
-	CLEAN_CALLBACK(ConcatTransform);
-	CLEAN_CALLBACK(Transform);
+		// MATRICES
+		CLEAN_CALLBACK(ConcatTransform);
+		CLEAN_CALLBACK(Transform);
 
-	// TOKEN-DICTIONARY
-	CLEAN_CALLBACK(EditBeginV);
-	CLEAN_CALLBACK(IfBeginV);
-	CLEAN_CALLBACK(ElseIfV);
-	CLEAN_CALLBACK(ProjectionV);
-	CLEAN_CALLBACK(HiderV);
-	CLEAN_CALLBACK(OptionV);
-	CLEAN_CALLBACK(AttributeV);
-	CLEAN_CALLBACK(AtmosphereV);
-	CLEAN_CALLBACK(DisplacementV);
-	CLEAN_CALLBACK(ExteriorV);
-	CLEAN_CALLBACK(InteriorV);
-	CLEAN_CALLBACK(SurfaceV);
-	CLEAN_CALLBACK(GeometryV);
-	CLEAN_CALLBACK(PatchV);
-	CLEAN_CALLBACK(DisplayChannelV);
-	CLEAN_CALLBACK(CameraV);
-	CLEAN_CALLBACK(PixelSampleImagerV);
-	CLEAN_CALLBACK(EditWorldBeginV);
-	CLEAN_CALLBACK(ImagerV);
+		// TOKEN-DICTIONARY
+		CLEAN_CALLBACK(EditBeginV);
+		CLEAN_CALLBACK(IfBeginV);
+		CLEAN_CALLBACK(ElseIfV);
+		CLEAN_CALLBACK(ProjectionV);
+		CLEAN_CALLBACK(HiderV);
+		CLEAN_CALLBACK(OptionV);
+		CLEAN_CALLBACK(AttributeV);
+		CLEAN_CALLBACK(AtmosphereV);
+		CLEAN_CALLBACK(DisplacementV);
+		CLEAN_CALLBACK(ExteriorV);
+		CLEAN_CALLBACK(InteriorV);
+		CLEAN_CALLBACK(SurfaceV);
+		CLEAN_CALLBACK(GeometryV);
+		CLEAN_CALLBACK(PatchV);
+		CLEAN_CALLBACK(DisplayChannelV);
+		CLEAN_CALLBACK(CameraV);
+		CLEAN_CALLBACK(PixelSampleImagerV);
+		CLEAN_CALLBACK(EditWorldBeginV);
+		CLEAN_CALLBACK(ImagerV);
 
-	// DUO-TOKENS/DICT
-	CLEAN_CALLBACK(ResourceV);
-	CLEAN_CALLBACK(ShaderV);
+		// DUO-TOKENS/DICT
+		CLEAN_CALLBACK(ResourceV);
+		CLEAN_CALLBACK(ShaderV);
 
-	// DICT WITH HANDLES
-	CLEAN_CALLBACK(ArchiveBeginV);
-	CLEAN_CALLBACK(LightSourceV);
+		// DICT WITH HANDLES
+		CLEAN_CALLBACK(ArchiveBeginV);
+		CLEAN_CALLBACK(LightSourceV);
+	};
 
 	// DESTROY
-	if(m_filter != NULL) delete m_filter;
-	if(m_filterobj != NULL) Py_DECREF(m_filterobj);
-	if(m_module != NULL) Py_DECREF(m_module);
+	//if(m_filter != NULL) delete m_filter;
+	if(m_filterobj != NULL) Py_XDECREF(m_filterobj);
+	if(m_module != NULL) Py_XDECREF(m_module);
 
 	// ...HOPING, RIF FILTERS ARE DESTROYED NOT IN PARALLEL
 	Riffler::m_counter--;
@@ -611,7 +614,7 @@ Riffler::~Riffler()
 
 RifFilter& Riffler::GetFilter()
 {
-	return *m_filter;
+	return *this;
 };
 
 extern "C" 
@@ -640,132 +643,6 @@ extern "C"
 		return new Riffler(argc,argv);
 	};
 };
-
-/*/ PLAIN
-DEFINE_CALLBACKFN(FrameEnd)
-DEFINE_CALLBACKFN(WorldBegin)
-DEFINE_CALLBACKFN(WorldEnd)
-
-DEFINE_CALLBACKFN(AttributeBegin);
-DEFINE_CALLBACKFN(AttributeEnd);
-
-DEFINE_CALLBACKFN(TransformBegin);
-DEFINE_CALLBACKFN(TransformEnd);
-
-DEFINE_CALLBACKFN(SolidEnd);
-
-//DEFINE_CALLBACKFN(ObjectBegin);
-//DEFINE_CALLBACKFN(ObjectEnd);
-
-DEFINE_CALLBACKFN(MotionEnd);
-
-DEFINE_CALLBACKFN(Identity);
-
-DEFINE_CALLBACKFN(ReverseOrientation);
-
-DEFINE_CALLBACKFN(ArchiveEnd);
-
-DEFINE_CALLBACKFN(Else);
-DEFINE_CALLBACKFN(IfEnd);
-
-DEFINE_CALLBACKFN(ResourceBegin);
-DEFINE_CALLBACKFN(ResourceEnd);
-DEFINE_CALLBACKFN(EditEnd);
-DEFINE_CALLBACKFN(EditAttributeEnd);
-DEFINE_CALLBACKFN(EditWorldEnd);
-
-// ONE INT
-DEFINE_CALLBACKFN(FrameBegin);
-DEFINE_CALLBACKFN(Sides);
-
-// ONE FLOAT
-DEFINE_CALLBACKFN(FrameAspectRatio);
-DEFINE_CALLBACKFN(PixelVariance);
-DEFINE_CALLBACKFN(ShadingRate);
-DEFINE_CALLBACKFN(RelativeDetail);
-DEFINE_CALLBACKFN(Perspective);
-
-// ONE COLOR
-DEFINE_CALLBACKFN(Color);
-DEFINE_CALLBACKFN(Opacity);
-
-// BOOLEAN
-DEFINE_CALLBACKFN(Matte);
-
-// STRINGS
-DEFINE_CALLBACKFN(ShadingInterpolation);
-DEFINE_CALLBACKFN(SolidBegin);
-DEFINE_CALLBACKFN(EditAttributeBegin);
-DEFINE_CALLBACKFN(Orientation);
-DEFINE_CALLBACKFN(CoordSysTransform);
-DEFINE_CALLBACKFN(CoordinateSystem);
-DEFINE_CALLBACKFN(ScopedCoordinateSystem);
-DEFINE_CALLBACKFN(System);
-
-// POLY FLOATS
-
-// 2
-DEFINE_CALLBACKFN(Clipping);
-DEFINE_CALLBACKFN(Shutter);
-DEFINE_CALLBACKFN(Exposure);
-DEFINE_CALLBACKFN(PixelSamples);
-
-// 3
-DEFINE_CALLBACKFN(Scale);
-DEFINE_CALLBACKFN(DepthOfField);
-DEFINE_CALLBACKFN(Translate);
-
-// 4
-DEFINE_CALLBACKFN(CropWindow);
-DEFINE_CALLBACKFN(ScreenWindow);
-DEFINE_CALLBACKFN(DetailRange);
-DEFINE_CALLBACKFN(Rotate);
-
-// 6
-DEFINE_CALLBACKFN(ClippingPlane);
-
-// 7
-DEFINE_CALLBACKFN(Skew);
-
-// 8
-DEFINE_CALLBACKFN(TextureCoordinates);
-
-// BOUNDS
-DEFINE_CALLBACKFN(Bound);
-DEFINE_CALLBACKFN(Detail);
-
-// MATRICIES
-DEFINE_CALLBACKFN(ConcatTransform);
-DEFINE_CALLBACKFN(Transform);
-
-// TOKEN-DICTIONARY
-DEFINE_CALLBACKFN(EditBeginV);
-DEFINE_CALLBACKFN(IfBeginV);
-DEFINE_CALLBACKFN(ElseIfV);
-DEFINE_CALLBACKFN(ProjectionV);
-DEFINE_CALLBACKFN(HiderV);
-DEFINE_CALLBACKFN(OptionV);
-DEFINE_CALLBACKFN(AttributeV);
-DEFINE_CALLBACKFN(AtmosphereV);
-DEFINE_CALLBACKFN(DisplacementV);
-DEFINE_CALLBACKFN(ExteriorV);
-DEFINE_CALLBACKFN(InteriorV);
-DEFINE_CALLBACKFN(SurfaceV);
-DEFINE_CALLBACKFN(GeometryV);
-DEFINE_CALLBACKFN(PatchV);
-DEFINE_CALLBACKFN(DisplayChannelV);
-DEFINE_CALLBACKFN(CameraV);
-DEFINE_CALLBACKFN(PixelSampleImagerV);
-DEFINE_CALLBACKFN(EditWorldBeginV);
-DEFINE_CALLBACKFN(ImagerV);
-
-// DUO-TOKENS/DICT
-DEFINE_CALLBACKFN(ResourceV);
-DEFINE_CALLBACKFN(ShaderV);
-
-// DICT WITH HANDLES
-DEFINE_CALLBACKFN(ArchiveBeginV);
-DEFINE_CALLBACKFN(LightSourceV);*/
 
 bool ParseDictionary(PyObject* dict, int n, RtToken tk[], RtPointer vl[]);
 
@@ -830,8 +707,8 @@ FORWARD_FLOAT(Perspective);
 	PyObject* pResult = PyObject_CallObject(filter->_##callback##Func, pArgs); \
 	Py_XDECREF(pResult); \
 	Py_XDECREF(pArgs); \
-	Py_XDECREF(pfArgs); \
 };
+//	Py_XDECREF(pfArgs); \
 
 FORWARD_COLOR(Color);
 FORWARD_COLOR(Opacity);
@@ -928,17 +805,31 @@ MATRICES(Transform);
 	PyObject* pResult = PyObject_CallObject(filter->_##callback##Func, pArgs); \
 	Py_XDECREF(pResult); \
 	Py_XDECREF(pArgs); \
-	Py_XDECREF(pName); \
-	Py_XDECREF(pDict); \
 };
+//	Py_XDECREF(pName); \
+//	Py_XDECREF(pDict); \
 
+//CALLBACKFN(AttributeV)(RtToken name, RtInt n, RtToken tk[], RtPointer vl[])
+//{
+//	PyObject* pArgs = PyTuple_New(2);
+//	PyObject* pName = Py_BuildValue("s",name);
+//	PyTuple_SetItem(pArgs, 0, pName);
+//	PyObject* pDict = PyDict_New();
+//	PyTuple_SetItem(pArgs, 1, pDict);
+//	ParseDictionary(pDict, n, tk, vl);
+//	GETFILTER;
+//	PyObject* pResult = PyObject_CallObject(filter->_AttributeVFunc, pArgs);
+//	Py_XDECREF(pResult);
+//	Py_XDECREF(pArgs);
+//};
+
+TOKEN_DICTIONARY(AttributeV);
 TOKEN_DICTIONARY(EditBeginV);
 TOKEN_DICTIONARY(IfBeginV);
 TOKEN_DICTIONARY(ElseIfV);
 TOKEN_DICTIONARY(ProjectionV);
 TOKEN_DICTIONARY(HiderV);
 TOKEN_DICTIONARY(OptionV);
-TOKEN_DICTIONARY(AttributeV);
 TOKEN_DICTIONARY(AtmosphereV);
 TOKEN_DICTIONARY(DisplacementV);
 TOKEN_DICTIONARY(ExteriorV);
@@ -967,10 +858,10 @@ TOKEN_DICTIONARY(ImagerV);
 	PyObject* pResult = PyObject_CallObject(filter->_##callback##Func, pArgs); \
 	Py_XDECREF(pResult); \
 	Py_XDECREF(pArgs); \
-	Py_XDECREF(pOne); \
-	Py_XDECREF(pTwo); \
-	Py_XDECREF(pDict); \
 };
+//	Py_XDECREF(pOne); \
+//	Py_XDECREF(pTwo); \
+//	Py_XDECREF(pDict); \
 
 DUO_TOKEN_DICTIONARY(ResourceV);
 DUO_TOKEN_DICTIONARY(ShaderV);
@@ -987,8 +878,8 @@ RtArchiveHandle Riffler::_ArchiveBeginV(RtToken name, RtInt n, RtToken tk[], RtP
 	PyObject* pResult = PyObject_CallObject(filter->_ArchiveBeginVFunc, pArgs);
 	Py_XDECREF(pResult);
 	Py_XDECREF(pArgs);
-	Py_XDECREF(pName);
-	Py_XDECREF(pDict);
+	//Py_XDECREF(pName);
+	//Py_XDECREF(pDict);
 
 	// STUB
 	RtArchiveHandle h;
@@ -1001,17 +892,27 @@ RtLightHandle Riffler::_LightSourceV(RtToken name, RtInt n, RtToken tk[], RtPoin
 	PyObject* pName = Py_BuildValue("s",name);
 	PyTuple_SetItem(pArgs, 0, pName);
 	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+
 	PyTuple_SetItem(pArgs, 1, pDict);
-	ParseDictionary(pDict, n, tk, vl);
+
 	GETFILTER;
 	PyObject* pResult = PyObject_CallObject(filter->_LightSourceVFunc, pArgs);
-	//PyObject* pResult = PyObject_CallMethod(filter,"LightSource","s {}",pName,pArgs);
+
 	Py_XDECREF(pResult);
 	Py_XDECREF(pArgs);
-	Py_XDECREF(pName);
-	Py_XDECREF(pDict);
+	//Py_XDECREF(pName);
+	//Py_XDECREF(pDict);
 
 	// STUB
-	RtLightHandle h;
+	for(int i=0;i<n;i++)
+	{
+		if(strcmp(tk[i],"__handleid") == 0)
+		{
+			RtLightHandle h = strdup((RtToken)vl[i]);
+			return h;
+		};
+	};
+	RtLightHandle h = strdup(name);
 	return h;
 };
