@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(RMANTREE)\include;$(PYTHON)/include"
+				AdditionalIncludeDirectories="&quot;$(RMANTREE)\include&quot;;C:\App\Langs\Python27\Include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -66,10 +66,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libprman.lib python26_d.lib pyexpat.lib"
+				AdditionalDependencies="libprman.lib python27.lib"
 				OutputFile="$(RMANTREE)\etc\$(ProjectName).dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(RMANTREE)/lib;$(PYTHON)/libs"
+				AdditionalLibraryDirectories="&quot;$(RMANTREE)/lib&quot;;C:\App\Langs\Python27\libs"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="17"

@@ -284,13 +284,28 @@ bool DisposeTKVL(int n, RtToken* tk, RtPointer* vl);
 	SUCCESS	\
 };
 
+//DEFINE_RICALL(AttributeV)
+//{
+//	RtToken name = PyString_AsString(PyTuple_GetItem(args,0));
+//	PyObject* dict =  PyTuple_GetItem(args,1);
+//	RtInt n = 0;
+//	RtToken* tk;
+//	RtPointer* vl;
+//	if(CollectDictionary(dict,&n, &tk,&vl))
+//	{
+//		RiAttributeV(name,n,tk,vl);
+//	};
+//	DisposeTKVL(n,tk,vl);
+//	SUCCESS
+//};
+
+TOKEN_DICTIONARY_CALL(AttributeV);
 TOKEN_DICTIONARY_CALL(EditBeginV);
 TOKEN_DICTIONARY_CALL(IfBeginV);
 TOKEN_DICTIONARY_CALL(ElseIfV);
 TOKEN_DICTIONARY_CALL(ProjectionV);
 TOKEN_DICTIONARY_CALL(HiderV);
 TOKEN_DICTIONARY_CALL(OptionV);
-TOKEN_DICTIONARY_CALL(AttributeV);
 TOKEN_DICTIONARY_CALL(AtmosphereV);
 TOKEN_DICTIONARY_CALL(DisplacementV);
 TOKEN_DICTIONARY_CALL(ExteriorV);
