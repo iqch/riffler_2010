@@ -6,7 +6,7 @@
 *	RiCalls.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module source
 *
-*	Version: 0.7
+*	Version: 0.8
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -333,3 +333,374 @@ DUO_TOKEN_DICTIONARY_CALL(ShaderV);
 // DICT WITH HANDLES == ONE TOKENS WITH DICT
 TOKEN_DICTIONARY_CALL(ArchiveBeginV);
 TOKEN_DICTIONARY_CALL(LightSourceV);
+
+// MISC
+DEFINE_RICALL(ReadArchiveV)
+{
+	RtToken name = PyString_AsString(PyTuple_GetItem(args,0));
+	PyObject* dict =  PyTuple_GetItem(args,1);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiReadArchiveV(name,NULL,n,tk,vl);
+	DisposeTKVL(n,tk,vl);
+	SUCCESS
+};
+
+DEFINE_RICALL(MotionBeginV)
+{
+	PyObject* pT = PyTuple_GetItem(args,0);
+	if(!PyTuple_Check(pT)) FAIL;
+
+	RtInt n = PyTuple_Size(pT);
+	if(n<1) FAIL;
+
+	float* times = new float[n];
+	if(times == NULL) FAIL;
+	
+	for(int i=0;i<n;i++) times[i] =  PyFloat_AsDouble(PyTuple_GetItem(pT,i));
+
+	RiMotionBeginV(n,times);
+
+	delete [] times;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(Format)
+{
+	if(PyTuple_Size(args) != 3) FAIL;
+
+	int xres = PyInt_AsLong(PyTuple_GetItem(args,0));
+	int yres = PyInt_AsLong(PyTuple_GetItem(args,1));
+	float aspect = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+
+	RiFormat(xres,yres,aspect);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(GeometricApproximation)
+{
+	if(PyTuple_Size(args) != 2) FAIL;
+
+	RtToken type = PyString_AsString(PyTuple_GetItem(args,0));
+	float val = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+
+	RiGeometricApproximation(type,val);
+
+	delete [] type;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(Quantize)
+{
+	if(PyTuple_Size(args) != 5) FAIL;
+
+	RtToken type = PyString_AsString(PyTuple_GetItem(args,0));
+	int one = PyInt_AsLong(PyTuple_GetItem(args,1));
+	int _min = PyInt_AsLong(PyTuple_GetItem(args,2));
+	int _max = PyInt_AsLong(PyTuple_GetItem(args,3));
+	float ampl = PyFloat_AsDouble(PyTuple_GetItem(args,4));
+
+	RiQuantize(type,one,_min,_max,ampl);
+
+	delete [] type;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(Illuminate)
+{
+	if(PyTuple_Size(args) != 2) FAIL;
+
+	RtToken light = PyString_AsString(PyTuple_GetItem(args,0));
+	RtBoolean on = (PyInt_AsLong(PyTuple_GetItem(args,1)) == 0 ? 0 : 1);
+
+	RiIlluminate((RtLightHandle)light,on);
+
+	delete [] light;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(DisplayV)
+{
+	if(PyTuple_Size(args) != 4) FAIL;
+
+	char* name = PyString_AsString(PyTuple_GetItem(args,0));
+	RtToken type = PyString_AsString(PyTuple_GetItem(args,1));
+	RtToken mode = PyString_AsString(PyTuple_GetItem(args,2));
+
+	PyObject* dict =  PyTuple_GetItem(args,3);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiDisplayV(name,type,mode,n,tk,vl);
+	DisposeTKVL(n,tk,vl);
+
+	delete [] name;
+	delete [] type;
+	delete [] mode;
+
+	SUCCESS
+};
+
+RtFilterFunc getFilterFunction(PyObject* obj)
+{
+	char* name = PyString_AsString(obj);
+
+	RtFilterFunc filterFunc = RiBoxFilter;
+
+	if(strcmp(name,"bessel")==0) filterFunc = RiBesselFilter;
+	else if(strcmp(name,"blackman-harris")==0) filterFunc = RiBlackmanHarrisFilter;
+	else if(strcmp(name,"box")==0) filterFunc = RiBoxFilter;
+	else if(strcmp(name,"catmull-rom")==0) filterFunc = RiCatmullRomFilter;
+	else if(strcmp(name,"disk")==0) filterFunc = RiDiskFilter;
+	else if(strcmp(name,"gaussian")==0) filterFunc = RiGaussianFilter;
+	else if(strcmp(name,"mitchell")==0) filterFunc = RiMitchellFilter;
+	else if(strcmp(name,"lanczos")==0) filterFunc = RiLanczosFilter;
+	else if(strcmp(name,"separable-catmull-rom")==0) filterFunc = RiSeparableCatmullRomFilter;
+	else if(strcmp(name,"sinc")==0) filterFunc = RiSincFilter;
+	else if(strcmp(name,"triangle")==0) filterFunc = RiTriangleFilter;
+
+	delete [] name;
+
+	return filterFunc;
+};
+
+DEFINE_RICALL(PixelFilter)
+{
+	if(PyTuple_Size(args) != 3) FAIL;
+
+	RtFilterFunc filterFunc = getFilterFunction(PyTuple_GetItem(args,0));
+
+	RtFloat x = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat y = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+
+	RiPixelFilter(filterFunc,x,y);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(Basis)
+{
+	if(PyTuple_Size(args) != 4) FAIL;
+
+	RtBasis ubasis;
+	{
+		char* uname = PyString_AsString(PyTuple_GetItem(args,0));
+		if(strcmp(uname,"bezier")==0) memcpy(ubasis,RiBezierBasis,64);
+		else if(strcmp(uname,"spline")==0) memcpy(ubasis,RiBSplineBasis,64);
+		else if(strcmp(uname,"catmull-rom")==0) memcpy(ubasis,RiCatmullRomBasis,64);
+		else if(strcmp(uname,"hermite")==0) memcpy(ubasis,RiHermiteBasis,64);
+		else if(strcmp(uname,"power")==0) memcpy(ubasis,RiPowerBasis,64);
+		else FAIL;
+		delete [] uname;
+	};
+
+	RtBasis vbasis;
+	{
+		char* vname = PyString_AsString(PyTuple_GetItem(args,2));
+		if(strcmp(vname,"bezier")==0) memcpy(vbasis,RiBezierBasis,64);
+		else if(strcmp(vname,"spline")==0) memcpy(vbasis,RiBSplineBasis,64);
+		else if(strcmp(vname,"catmull-rom")==0) memcpy(vbasis,RiCatmullRomBasis,64);
+		else if(strcmp(vname,"hermite")==0) memcpy(vbasis,RiHermiteBasis,64);
+		else if(strcmp(vname,"power")==0) memcpy(vbasis,RiPowerBasis,64);
+		else FAIL;
+		delete [] vname;
+	}
+
+	RtFloat x = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat y = PyFloat_AsDouble(PyTuple_GetItem(args,3));
+
+	RiBasis(ubasis,x,vbasis,y);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(VArchiveRecord)
+{
+	if(PyTuple_Size(args) != 1) FAIL;
+
+	char* cmnt = PyString_AsString(PyTuple_GetItem(args,0));
+
+	va_list v;
+
+	RiVArchiveRecord(RI_VERBATIM,cmnt,v);
+
+	delete [] cmnt;
+
+	SUCCESS
+};
+
+// MAKERS
+
+DEFINE_RICALL(MakeTextureV)
+{
+	if(PyTuple_Size(args) != 6) FAIL;
+
+	char* pix = PyString_AsString(PyTuple_GetItem(args,0));
+	char* tex = PyString_AsString(PyTuple_GetItem(args,1));
+
+	PyObject* pW = PyTuple_GetItem(args,2);
+	RtToken sw = PyString_AsString(PyTuple_GetItem(pW,0));
+	RtToken tw = PyString_AsString(PyTuple_GetItem(pW,1));
+
+	RtFilterFunc filterFunc = getFilterFunction(PyTuple_GetItem(args,3));
+
+	PyObject* pF = PyTuple_GetItem(args,4);
+	float sf = PyFloat_AsDouble(PyTuple_GetItem(pF,0));
+	float tf = PyFloat_AsDouble(PyTuple_GetItem(pF,1));
+
+	PyObject* dict =  PyTuple_GetItem(args,5);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiMakeTextureV(pix,tex,sw,tw,filterFunc,sf,tf,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	delete [] sw;
+	delete [] tw;
+	delete [] tex;
+	delete [] pix;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(MakeShadowV)
+{
+	if(PyTuple_Size(args) != 3) FAIL;
+
+	char* pix = PyString_AsString(PyTuple_GetItem(args,0));
+	char* tex = PyString_AsString(PyTuple_GetItem(args,1));
+
+	PyObject* dict =  PyTuple_GetItem(args,3);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiMakeShadowV(pix,tex,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	delete [] tex;
+	delete [] pix;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(MakeCubeFaceEnvironmentV)
+{
+	if(PyTuple_Size(args) != 6) FAIL;
+
+	PyObject* pP = PyTuple_GetItem(args,0);
+	char* px = PyString_AsString(PyTuple_GetItem(pP,0));
+	char* nx = PyString_AsString(PyTuple_GetItem(pP,1));
+	char* py = PyString_AsString(PyTuple_GetItem(pP,2));
+	char* ny = PyString_AsString(PyTuple_GetItem(pP,3));
+	char* pz = PyString_AsString(PyTuple_GetItem(pP,4));
+	char* nz = PyString_AsString(PyTuple_GetItem(pP,5));
+
+	char* tex = PyString_AsString(PyTuple_GetItem(args,1));
+
+	float fov = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+
+	RtFilterFunc filterFunc = getFilterFunction(PyTuple_GetItem(args,3));
+
+	PyObject* pF = PyTuple_GetItem(args,4);
+	float sf = PyFloat_AsDouble(PyTuple_GetItem(pF,0));
+	float tf = PyFloat_AsDouble(PyTuple_GetItem(pF,1));
+
+	PyObject* dict =  PyTuple_GetItem(args,5);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiMakeCubeFaceEnvironmentV(
+			px,nx,py,ny,pz,nz,tex,
+			fov,filterFunc,sf,tf,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	delete [] tex;
+	delete [] px; delete [] nx;
+	delete [] py; delete [] ny;
+	delete [] pz; delete [] nz;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(MakeLatLongEnvironmentV)
+{
+	if(PyTuple_Size(args) != 5) FAIL;
+
+	char* pix = PyString_AsString(PyTuple_GetItem(args,0));
+	char* tex = PyString_AsString(PyTuple_GetItem(args,1));
+
+	RtFilterFunc filterFunc = getFilterFunction(PyTuple_GetItem(args,2));
+
+	PyObject* pF = PyTuple_GetItem(args,3);
+	float sf = PyFloat_AsDouble(PyTuple_GetItem(pF,0));
+	float tf = PyFloat_AsDouble(PyTuple_GetItem(pF,1));
+
+	PyObject* dict =  PyTuple_GetItem(args,4);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiMakeLatLongEnvironmentV(pix,tex,filterFunc,sf,tf,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	delete [] tex;
+	delete [] pix;
+
+	SUCCESS
+};
+
+DEFINE_RICALL(MakeBrickMapV)
+{
+	if(PyTuple_Size(args) != 3) FAIL;
+
+	PyObject* pM = PyTuple_GetItem(args,0);
+
+	if(!PyTuple_Check(pM)) FAIL;
+
+	int cnt = PyTuple_Size(pM);
+
+	if(cnt < 1) FAIL;
+
+	RtToken* maps = new RtToken[cnt];
+
+	for(int i=0;i<cnt;i++) maps[i] = PyString_AsString(PyTuple_GetItem(pM,i));
+
+	char* tex = PyString_AsString(PyTuple_GetItem(args,1));
+
+	PyObject* dict =  PyTuple_GetItem(args,2);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiMakeBrickMapV(cnt,(char**)maps,tex,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	delete [] tex;
+
+	for(int i=0;i<cnt;i++) delete [] maps[i];
+	delete [] maps;
+
+	SUCCESS
+};
+
+// GPRIMS
+

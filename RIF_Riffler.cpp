@@ -6,7 +6,7 @@
 *	RIF_Riffler.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Base source
 *
-*	Version: 0.7
+*	Version: 0.8
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -105,7 +105,6 @@ private:
 	DECLARE_CALLBACK(ScopedCoordinateSystem)(RtToken space);
 	DECLARE_CALLBACK(System)(RtToken cmdstring);
 
-
 	// POLY-FLOATS
 
 	// 2
@@ -174,48 +173,52 @@ private:
 	PyObject* _LightSourceVFunc;
 	static RtLightHandle	_LightSourceV(RtToken name, RtInt, RtToken[], RtPointer[]);
 
-	// GPRIMS
-	//RtVoid  	_BlobbyV(RtInt nleaf, RtInt ninst, RtInt inst[], RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ConeV(RtFloat height, RtFloat radius, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_CurvesV(RtToken type, RtInt ncurves, RtInt nvert[], RtToken wrap, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_CylinderV(RtFloat rad, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_DiskV(RtFloat height, RtFloat radius, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_GeneralPolygonV(RtInt nloops, RtInt nverts[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_HyperboloidV(RtPoint point1, RtPoint point2, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_NuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ParaboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PatchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PointsV(RtInt nverts, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PolygonV(RtInt nverts, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_Procedural(RtPointer data, RtBound bound, RtProcSubdivFunc sdfunc, RtProcFreeFunc freefunc);
-	//RtVoid  	_SphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_SubdivisionMeshV(RtToken mask, RtInt nf, RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_TorusV(RtFloat majrad, RtFloat minrad, RtFloat phimin, RtFloat phimax, 	RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_TrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat min[], RtFloat max[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
-	//RtVoid  	_HierarchicalSubdivisionMeshV(RtToken mask, RtInt nf, 	RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[],	RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt, RtToken[], RtPointer[]);
+	// MISC
+	DECLARE_CALLBACK(ReadArchiveV)(RtToken name, RtArchiveCallback callback, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(MotionBeginV)(RtInt n, RtFloat times[]);
+	DECLARE_CALLBACK(Format)(RtInt xres, RtInt yres, RtFloat aspect);
+	DECLARE_CALLBACK(GeometricApproximation)(RtToken type, RtFloat value);
+	DECLARE_CALLBACK(Quantize)(RtToken type, RtInt one, RtInt min, RtInt max, RtFloat ampl);
+	DECLARE_CALLBACK(Illuminate)(RtLightHandle light, RtBoolean onoff);
+	DECLARE_CALLBACK(DisplayV)(char *name, RtToken type, RtToken mode, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(PixelFilter)(RtFilterFunc filterFunc, RtFloat xwidth, RtFloat ywidth);
+	DECLARE_CALLBACK(Basis)(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
+	DECLARE_CALLBACK(VArchiveRecord)(RtToken type, char *format, va_list vap);
 
 	// MAKERS
-	//RtVoid  	_MakeCubeFaceEnvironmentV(char *px, char *nx, char *py, char *ny,	char *pz, char *nz, char *tex, RtFloat fov,	RtFilterFunc filterFunc,	RtFloat swidth, RtFloat ywidth, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_MakeLatLongEnvironmentV(char *pic, char *tex, RtFilterFunc filterFunc,	RtFloat swidth, RtFloat twidth, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_MakeShadowV(char *pic, char *tex, 	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_MakeTextureV(char *pic, char *tex, 	RtToken swrap, RtToken twrap,	RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, RtInt, RtToken[], RtPointer[]);
-	//RtVoid		_MakeBrickMapV(RtInt, RtToken *, RtToken, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(MakeTextureV)(char *pic, char *tex, 	RtToken swrap, RtToken twrap,	RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(MakeShadowV)(char *pic, char *tex, 	RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(MakeCubeFaceEnvironmentV)(char *px, char *nx, char *py, char *ny,	char *pz, char *nz, char *tex, RtFloat fov,	RtFilterFunc filterFunc,	RtFloat swidth, RtFloat ywidth, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(MakeLatLongEnvironmentV)(char *pic, char *tex, RtFilterFunc filterFunc,	RtFloat swidth, RtFloat twidth, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(MakeBrickMapV)(RtInt cnt, RtToken* maps, RtToken brickmap, RtInt n, RtToken tk[], RtPointer vl[]);
 
-	// RECENT
-	//RtVoid  	_ReadArchiveV(RtToken name, RtArchiveCallback callback, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_MotionBeginV(RtInt n, RtFloat times[]);
-	//RtVoid  	_Format(RtInt xres, RtInt yres, RtFloat aspect);
-	//RtVoid  	_DisplayV(char *name, RtToken type, RtToken mode, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PixelFilter(RtFilterFunc filterFunc, RtFloat xwidth, RtFloat ywidth);
-	//RtVoid  	_Quantize(RtToken type, RtInt one, RtInt min, RtInt max, RtFloat ampl);
-	//RtVoid  	_Illuminate(RtLightHandle light, RtBoolean onoff);
-	//RtVoid  	_GeometricApproximation(RtToken type, RtFloat value);
-	//RtVoid  	_Basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
+	// GPRIMS
+	//RtVoid  	_BlobbyV(RtInt nleaf, RtInt ninst, RtInt inst[], RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], RtInt, RtToken[], RtPointer[]);
+
+	//RtVoid  	_ConeV(RtFloat height, RtFloat radius, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_CylinderV(RtFloat rad, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_DiskV(RtFloat height, RtFloat radius, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_HyperboloidV(RtPoint point1, RtPoint point2, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_ParaboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_SphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_Procedural(RtPointer data, RtBound bound, RtProcSubdivFunc sdfunc, RtProcFreeFunc freefunc);
+	//RtVoid  	_TorusV(RtFloat majrad, RtFloat minrad, RtFloat phimin, RtFloat phimax, 	RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+
+	//RtVoid  	_CurvesV(RtToken type, RtInt ncurves, RtInt nvert[], RtToken wrap, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_PointsV(RtInt nverts, RtInt, RtToken[], RtPointer[]);
+
+	//RtVoid  	_NuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_PatchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_TrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat min[], RtFloat max[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
+
+	//RtVoid  	_PolygonV(RtInt nverts, RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_GeneralPolygonV(RtInt nloops, RtInt nverts[], RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_PointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_PointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_SubdivisionMeshV(RtToken mask, RtInt nf, RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt, RtToken[], RtPointer[]);
+	//RtVoid  	_HierarchicalSubdivisionMeshV(RtToken mask, RtInt nf, 	RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[],	RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt, RtToken[], RtPointer[]);
 
 	// TO SKIP
-	//RtVoid  	_VArchiveRecord(RtToken type, char *format, va_list vap);
 	//RtToken 	_Declare(char *name, char *declaration);
 	//RtVoid  	_PixelFidelity(RtFloat variation); // OBSOLETE call: see RiPixelVariance
 	//RtVoid		_ErrorHandler(RtErrorHandler);
@@ -430,7 +433,27 @@ Riffler::Riffler(int argc, char **argv)
 	PARSE_CALLBACKV(ArchiveBegin);
 	PARSE_CALLBACKV(LightSource);
 
-	int i=0;
+	// MISC
+	PARSE_CALLBACKV(ReadArchive);
+	PARSE_CALLBACKV(MotionBegin);
+	PARSE_CALLBACK(Format);
+	PARSE_CALLBACK(GeometricApproximation);
+	PARSE_CALLBACK(Quantize);
+	PARSE_CALLBACK(Illuminate);
+	PARSE_CALLBACK(DisplayV);
+	PARSE_CALLBACK(PixelFilter);
+	PARSE_CALLBACK(Basis);
+	
+	_VArchiveRecordFunc = PyObject_GetAttrString(m_filterobj, "Comment");
+	if(PyCallable_Check(_VArchiveRecordFunc)) VArchiveRecord = &Riffler::_VArchiveRecord;
+	else Py_XDECREF(_VArchiveRecordFunc);
+
+	// MAKERS
+	PARSE_CALLBACKV(MakeTexture);
+	PARSE_CALLBACKV(MakeShadow);
+	PARSE_CALLBACKV(MakeCubeFaceEnvironment);
+	PARSE_CALLBACKV(MakeLatLongEnvironment);
+	PARSE_CALLBACKV(MakeBrickMap);
 };
 
 Riffler::~Riffler()
@@ -563,6 +586,25 @@ Riffler::~Riffler()
 		// DICT WITH HANDLES
 		CLEAN_CALLBACK(ArchiveBeginV);
 		CLEAN_CALLBACK(LightSourceV);
+
+		// MISC
+		CLEAN_CALLBACK(ReadArchiveV);
+		CLEAN_CALLBACK(MotionBeginV);
+		CLEAN_CALLBACK(Format);
+		CLEAN_CALLBACK(GeometricApproximation);
+		CLEAN_CALLBACK(Quantize);
+		CLEAN_CALLBACK(Illuminate);
+		CLEAN_CALLBACK(DisplayV);
+		CLEAN_CALLBACK(PixelFilter);
+		CLEAN_CALLBACK(Basis);
+		CLEAN_CALLBACK(VArchiveRecord);
+
+		// MAKERS
+		CLEAN_CALLBACK(MakeTextureV);
+		CLEAN_CALLBACK(MakeShadowV);
+		CLEAN_CALLBACK(MakeCubeFaceEnvironmentV);
+		CLEAN_CALLBACK(MakeLatLongEnvironmentV);
+		CLEAN_CALLBACK(MakeBrickMapV);
 	};
 
 	// DESTROY
@@ -905,3 +947,298 @@ RtLightHandle Riffler::_LightSourceV(RtToken name, RtInt n, RtToken tk[], RtPoin
 	RtLightHandle h = strdup(name);
 	return h;
 };
+
+// MISC FUNCTIONS
+
+RtVoid Riffler::_ReadArchiveV(RtToken name, RtArchiveCallback callback, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(2);
+	PyObject* pName = Py_BuildValue("s",name);
+	PyTuple_SetItem(pArgs, 0, pName);
+	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+
+	PyTuple_SetItem(pArgs, 1, pDict);
+
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_ReadArchiveVFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_MotionBeginV(RtInt n, RtFloat times[])
+{
+	PyObject* pArgs = PyTuple_New(2);
+	
+	PyObject* pN = Py_BuildValue("i",n);
+	PyTuple_SetItem(pArgs, 0, pN);
+	
+	PyObject* pT = PyTuple_New(n);
+	for(int i=0;i<n;i++) PyTuple_SetItem(pT,i,Py_BuildValue("f",times[i]));
+	PyTuple_SetItem(pArgs, 1, pT);
+
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_MotionBeginVFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_Format(RtInt xres, RtInt yres, RtFloat aspect)
+{
+	PyObject* pArgs = Py_BuildValue("(iif)",xres,yres,aspect);
+	
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_FormatFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_GeometricApproximation(RtToken type, RtFloat value)
+{
+	PyObject* pArgs = Py_BuildValue("(sf)",type,value);
+	
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_GeometricApproximationFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_Quantize(RtToken type, RtInt one, RtInt _min, RtInt _max, RtFloat ampl)
+{
+	PyObject* pArgs = Py_BuildValue("(siiif)",type,one,_min,_max,ampl);
+	
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_QuantizeFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_Illuminate(RtLightHandle light, RtBoolean onoff)
+{
+	RtInt vl = (onoff == 0 ? 0 : 1);
+	PyObject* pArgs = Py_BuildValue("(si)",(char*)light,vl);
+	
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_IlluminateFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_DisplayV(char *name, RtToken type, RtToken mode, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(4);
+
+	PyTuple_SetItem(pArgs, 0, Py_BuildValue("s",name));
+	PyTuple_SetItem(pArgs, 1, Py_BuildValue("s",type));
+	PyTuple_SetItem(pArgs, 2, Py_BuildValue("s",mode));
+	
+	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+
+	PyTuple_SetItem(pArgs, 3, pDict);
+
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_DisplayVFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+PyObject* getFilterName(RtFilterFunc filterFunc)
+{
+	if(filterFunc == RiBesselFilter) return Py_BuildValue("s","bessel");
+	else if(filterFunc == RiBlackmanHarrisFilter) return Py_BuildValue("s","blackman-harris");
+	else if(filterFunc == RiCatmullRomFilter) return Py_BuildValue("s","catmull-rom");
+	else if(filterFunc == RiDiskFilter) return Py_BuildValue("s","disk");
+	else if(filterFunc == RiGaussianFilter) return Py_BuildValue("s","gaussian");
+	else if(filterFunc == RiMitchellFilter) return Py_BuildValue("s","mitchell");
+	else if(filterFunc == RiLanczosFilter) return Py_BuildValue("s","lanczos");
+	else if(filterFunc == RiSeparableCatmullRomFilter) return Py_BuildValue("s","separable-catmull-rom");
+	else if(filterFunc == RiSincFilter) return Py_BuildValue("s","sinc");
+	else if(filterFunc == RiTriangleFilter) return Py_BuildValue("s","triangle");
+	else /*if(filterFunc == RiBoxFilter) and default*/ return Py_BuildValue("s","box");
+}
+
+RtVoid Riffler::_PixelFilter(RtFilterFunc filterFunc, RtFloat xwidth, RtFloat ywidth)
+{
+	PyObject* pArgs = PyTuple_New(3);
+	PyTuple_SetItem(pArgs, 0, getFilterName(filterFunc));
+	PyTuple_SetItem(pArgs, 1, Py_BuildValue("f",xwidth));
+	PyTuple_SetItem(pArgs, 2, Py_BuildValue("f",ywidth));
+	
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_PixelFilterFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_Basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+{
+	PyObject* uname = NULL;
+	if(ubasis == RiBezierBasis) uname = Py_BuildValue("s","bezier");
+	else if(ubasis == RiBSplineBasis) uname = Py_BuildValue("s","spline");
+	else if(ubasis == RiCatmullRomBasis) uname = Py_BuildValue("s","catmull-rom");
+	else if(ubasis == RiHermiteBasis) uname = Py_BuildValue("s","hermite");
+	else if(ubasis == RiPowerBasis) uname = Py_BuildValue("s","power");
+	else return;
+
+	PyObject* vname = NULL;
+	if(vbasis == RiBezierBasis) vname = Py_BuildValue("s","bezier");
+	else if(vbasis == RiBSplineBasis) vname = Py_BuildValue("s","spline");
+	else if(vbasis == RiCatmullRomBasis) vname = Py_BuildValue("s","catmull-rom");
+	else if(vbasis == RiHermiteBasis) vname = Py_BuildValue("s","hermite");
+	else if(vbasis == RiPowerBasis) vname = Py_BuildValue("s","power");
+	else return;
+
+	PyObject* pArgs = PyTuple_New(4);
+	PyTuple_SetItem(pArgs, 0, uname);
+	PyTuple_SetItem(pArgs, 1, Py_BuildValue("f",ustep));
+	PyTuple_SetItem(pArgs, 2, vname);
+	PyTuple_SetItem(pArgs, 3, Py_BuildValue("f",vstep));
+	
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_BasisFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_VArchiveRecord(RtToken type, char *format, va_list)
+{
+	PyObject* pArgs = Py_BuildValue("(ss)",type,format);
+	
+	GETFILTER;
+	PyObject* pResult = PyObject_CallObject(filter->_VArchiveRecordFunc, pArgs);
+
+	Py_XDECREF(pResult);
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_MakeTextureV(char *pic, char *tex, 	RtToken swrap, RtToken twrap,	RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(6);
+
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",pic));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",tex));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("(ss)",swrap,twrap));
+	PyTuple_SetItem(pArgs,3,getFilterName(filterFunc));
+	PyTuple_SetItem(pArgs,4,Py_BuildValue("(ff)",swidth,twidth));
+
+	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+	PyTuple_SetItem(pArgs, 5, pDict);
+
+	if(res)
+	{
+		GETFILTER;
+		PyObject* pResult = PyObject_CallObject(filter->_MakeTextureVFunc, pArgs);
+		Py_XDECREF(pResult);
+	};
+
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_MakeShadowV(char *pic, char *tex, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(3);
+
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",pic));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",tex));
+
+	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+	PyTuple_SetItem(pArgs, 3, pDict);
+
+	if(res)
+	{
+		GETFILTER;
+		PyObject* pResult = PyObject_CallObject(filter->_MakeShadowVFunc, pArgs);
+		Py_XDECREF(pResult);
+	};
+
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_MakeCubeFaceEnvironmentV(
+	char *px, char *nx, char *py, char *ny, char *pz, char *nz, char *tex, 
+	RtFloat fov,	 RtFilterFunc filterFunc,	RtFloat swidth, RtFloat ywidth, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(6);
+
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("(ssssss(",px,nx,py,ny,pz,nz));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",tex));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",fov));
+	PyTuple_SetItem(pArgs,3,getFilterName(filterFunc));
+	PyTuple_SetItem(pArgs,4,Py_BuildValue("(ff)",swidth,ywidth));
+
+	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+	PyTuple_SetItem(pArgs, 5, pDict);
+
+	if(res)
+	{
+		GETFILTER;
+		PyObject* pResult = PyObject_CallObject(filter->_MakeTextureVFunc, pArgs);
+		Py_XDECREF(pResult);
+	};
+
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_MakeLatLongEnvironmentV(char *pic, char *tex, RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	PyObject* pArgs = PyTuple_New(5);
+
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",pic));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",tex));
+	PyTuple_SetItem(pArgs,2,getFilterName(filterFunc));
+	PyTuple_SetItem(pArgs,3,Py_BuildValue("(ff)",swidth,twidth));
+
+	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+	PyTuple_SetItem(pArgs, 4, pDict);
+
+	if(res)
+	{
+		GETFILTER;
+		PyObject* pResult = PyObject_CallObject(filter->_MakeLatLongEnvironmentVFunc, pArgs);
+		Py_XDECREF(pResult);
+	};
+
+	Py_XDECREF(pArgs);
+};
+
+RtVoid Riffler::_MakeBrickMapV(RtInt cnt, RtToken* maps, RtToken brickmap, RtInt n, RtToken tk[], RtPointer vl[])
+{
+	if(cnt < 1) return;
+
+	PyObject* pArgs = PyTuple_New(3);
+
+	PyObject* pM = PyTuple_New(cnt);
+	for(int i=0;i<cnt;i++) PyTuple_SetItem(pM,i,Py_BuildValue("s",maps[i]));
+
+	PyTuple_SetItem(pArgs,0,pM);
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",brickmap));
+
+	PyObject* pDict = PyDict_New();
+	bool res = ParseDictionary(pDict, n, tk, vl);
+	PyTuple_SetItem(pArgs, 3, pDict);
+
+	if(res)
+	{
+		GETFILTER;
+		PyObject* pResult = PyObject_CallObject(filter->_MakeBrickMapVFunc, pArgs);
+		Py_XDECREF(pResult);
+	};
+
+	Py_XDECREF(pArgs);
+};
+
+// GPRIMS

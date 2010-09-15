@@ -6,7 +6,7 @@
 *	RiCalls.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module header
 *
-*	Version: 0.7
+*	Version: 0.8
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -141,6 +141,27 @@ DEFINE_RICALL(ShaderV);
 DEFINE_RICALL(ArchiveBeginV);
 DEFINE_RICALL(LightSourceV);
 
+// MISC
+DEFINE_RICALL(ReadArchiveV);
+DEFINE_RICALL(MotionBeginV);
+DEFINE_RICALL(Format);
+DEFINE_RICALL(GeometricApproximation);
+DEFINE_RICALL(Quantize);
+DEFINE_RICALL(Illuminate);
+DEFINE_RICALL(DisplayV);
+DEFINE_RICALL(PixelFilter);
+DEFINE_RICALL(Basis);
+DEFINE_RICALL(VArchiveRecord);
+
+// MAKERS
+DEFINE_RICALL(MakeTextureV);
+DEFINE_RICALL(MakeShadowV);
+DEFINE_RICALL(MakeCubeFaceEnvironmentV);
+DEFINE_RICALL(MakeLatLongEnvironmentV);
+DEFINE_RICALL(MakeBrickMapV);
+
+// GPRIMS
+
 // TABLE
 #define RI_METHOD(method) {#method, _Ri##method, METH_VARARGS,""}
 #define RI_METHODV(method) {#method, _Ri##method##V, METH_VARARGS,""}
@@ -272,6 +293,27 @@ static PyMethodDef MethodTable[] = {
 	// DICT WITH HANDLES
 	RI_METHODV(ArchiveBegin),
 	RI_METHODV(LightSource),
+
+	// MISC
+	RI_METHODV(ReadArchive),
+	RI_METHODV(MotionBegin),
+	RI_METHOD(Format),
+	RI_METHOD(GeometricApproximation),
+	RI_METHOD(Quantize),
+	RI_METHOD(Illuminate),
+	RI_METHODV(Display),
+	RI_METHOD(PixelFilter),
+	RI_METHOD(Basis),
+	RI_METHOD(VArchiveRecord),
+
+	// MAKERS
+	RI_METHODV(MakeTexture),
+	RI_METHODV(MakeShadow),
+	RI_METHODV(MakeCubeFaceEnvironment),
+	RI_METHODV(MakeLatLongEnvironment),
+	RI_METHODV(MakeBrickMap),
+
+	// GPRIMS
 
 	// END
 	{NULL, NULL, 0, NULL}
