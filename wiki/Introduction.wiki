@@ -2,9 +2,9 @@
 
 = Introduction =
 
-RifRiffler is a dso module, that allows using custom python scripts act like rib-filtering procedure.
+Rif Riffler is a dso module, that allows using custom python scripts act like rib-filtering procedure.
 
-RifRiffler - расширение renderman-совмесtимых рендереров для использования python-скриптов для целей фильтрации rib-потока.
+Rif Riffler - расширение renderman-совмесtимых рендереров для использования python-скриптов для целей фильтрации rib-потока.
 
 = Preface =
 
