@@ -6,7 +6,7 @@
 *	RIF_Riffler.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Base source
 *
-*	Version: 0.8
+*	Version: 0.9
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -191,32 +191,36 @@ private:
 	DECLARE_CALLBACK(MakeCubeFaceEnvironmentV)(char *px, char *nx, char *py, char *ny,	char *pz, char *nz, char *tex, RtFloat fov,	RtFilterFunc filterFunc,	RtFloat swidth, RtFloat ywidth, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(MakeLatLongEnvironmentV)(char *pic, char *tex, RtFilterFunc filterFunc,	RtFloat swidth, RtFloat twidth, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(MakeBrickMapV)(RtInt cnt, RtToken* maps, RtToken brickmap, RtInt n, RtToken tk[], RtPointer vl[]);
-
+	
 	// GPRIMS
-	//RtVoid  	_BlobbyV(RtInt nleaf, RtInt ninst, RtInt inst[], RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(SphereV)(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(ConeV)(RtFloat height, RtFloat radius, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(CylinderV)(RtFloat rad, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(DiskV)(RtFloat height, RtFloat radius, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(TorusV)(RtFloat majrad, RtFloat minrad, RtFloat phimin, RtFloat phimax, 	RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(ParaboloidV)(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(HyperboloidV)(RtPoint point1, RtPoint point2, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
 
-	//RtVoid  	_ConeV(RtFloat height, RtFloat radius, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_CylinderV(RtFloat rad, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_DiskV(RtFloat height, RtFloat radius, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_HyperboloidV(RtPoint point1, RtPoint point2, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_ParaboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_SphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_Procedural(RtPointer data, RtBound bound, RtProcSubdivFunc sdfunc, RtProcFreeFunc freefunc);
-	//RtVoid  	_TorusV(RtFloat majrad, RtFloat minrad, RtFloat phimin, RtFloat phimax, 	RtFloat tmax, RtInt, RtToken[], RtPointer[]);
-
+	DECLARE_CALLBACK(PointsV)(RtInt nverts, RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_CurvesV(RtToken type, RtInt ncurves, RtInt nvert[], RtToken wrap, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PointsV(RtInt nverts, RtInt, RtToken[], RtPointer[]);
 
 	//RtVoid  	_NuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_PatchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt, RtToken[], RtPointer[]);
 	//RtVoid  	_TrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat min[], RtFloat max[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 
-	//RtVoid  	_PolygonV(RtInt nverts, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_GeneralPolygonV(RtInt nloops, RtInt nverts[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_SubdivisionMeshV(RtToken mask, RtInt nf, RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_HierarchicalSubdivisionMeshV(RtToken mask, RtInt nf, 	RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[],	RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(PolygonV)(RtInt nverts, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(PointsPolygonsV)(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(GeneralPolygonV)(RtInt nloops, RtInt nverts[], RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(PointsGeneralPolygonsV)(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(SubdivisionMeshV)(RtToken mask, RtInt nf, RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(HierarchicalSubdivisionMeshV)(RtToken mask, RtInt nf, 	RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[],	RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt, RtToken[], RtPointer[]);
+	
+	//DECLARE_CALLBACK(BlobbyV)(RtInt nleaf, RtInt ninst, RtInt inst[], RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], RtInt, RtToken[], RtPointer[]);
+
+	static RtVoid _Procedural(RtPointer data, RtBound bound, RtProcSubdivFunc sdfunc, RtProcFreeFunc freefunc);
+	PyObject* _DelayedReadArchiveFunc;
+	PyObject* _RunProgramFunc;
+	PyObject* _DynamicLoadFunc;
 
 	// TO SKIP
 	//RtToken 	_Declare(char *name, char *declaration);
@@ -454,6 +458,53 @@ Riffler::Riffler(int argc, char **argv)
 	PARSE_CALLBACKV(MakeCubeFaceEnvironment);
 	PARSE_CALLBACKV(MakeLatLongEnvironment);
 	PARSE_CALLBACKV(MakeBrickMap);
+
+	// GPRIMS
+	PARSE_CALLBACKV(Sphere);
+	PARSE_CALLBACKV(Cone);
+	PARSE_CALLBACKV(Cylinder);
+	PARSE_CALLBACKV(Disk);
+	PARSE_CALLBACKV(Torus);
+	PARSE_CALLBACKV(Paraboloid);
+	PARSE_CALLBACKV(Hyperboloid);
+	
+	//PARSE_CALLBACKV(Blobby);
+	PARSE_CALLBACKV(Points);
+
+	PARSE_CALLBACKV(Polygon);
+	PARSE_CALLBACKV(GeneralPolygon);
+	PARSE_CALLBACKV(PointsPolygons);
+	PARSE_CALLBACKV(PointsGeneralPolygons);
+
+	PARSE_CALLBACKV(SubdivisionMesh);
+	PARSE_CALLBACKV(HierarchicalSubdivisionMesh);
+
+	// PROCEDURAL
+	_DelayedReadArchiveFunc = PyObject_GetAttrString(m_filterobj, "DelayedReadArchive");
+	_RunProgramFunc = PyObject_GetAttrString(m_filterobj, "RunProgram");
+	_DynamicLoadFunc = PyObject_GetAttrString(m_filterobj, "DynamicLoad");
+
+	int check = (PyCallable_Check(_DelayedReadArchiveFunc)
+		+PyCallable_Check(_RunProgramFunc)
+		+PyCallable_Check(_DynamicLoadFunc));
+	
+	if(check != 0) Procedural = &Riffler::_Procedural;
+
+	if(!PyCallable_Check(_DelayedReadArchiveFunc))
+	{
+		Py_XDECREF(_DelayedReadArchiveFunc);
+		_DelayedReadArchiveFunc = NULL;
+	};
+	if(!PyCallable_Check(_RunProgramFunc))
+	{
+		Py_XDECREF(_RunProgramFunc);
+		_RunProgramFunc = NULL;
+	};
+	if(!PyCallable_Check(_DynamicLoadFunc))
+	{
+		Py_XDECREF(_DynamicLoadFunc);
+		_DynamicLoadFunc = NULL;
+	};
 };
 
 Riffler::~Riffler()
@@ -605,6 +656,31 @@ Riffler::~Riffler()
 		CLEAN_CALLBACK(MakeCubeFaceEnvironmentV);
 		CLEAN_CALLBACK(MakeLatLongEnvironmentV);
 		CLEAN_CALLBACK(MakeBrickMapV);
+
+		// GPRIMS
+		CLEAN_CALLBACK(SphereV);
+		CLEAN_CALLBACK(ConeV);
+		CLEAN_CALLBACK(CylinderV);
+		CLEAN_CALLBACK(DiskV);
+		CLEAN_CALLBACK(TorusV);
+		CLEAN_CALLBACK(ParaboloidV);
+		CLEAN_CALLBACK(HyperboloidV);
+
+		CLEAN_CALLBACK(PointsV);
+
+		//CLEAN_CALLBACK(BlobbyV);
+		CLEAN_CALLBACK(PolygonV);
+		CLEAN_CALLBACK(PointsPolygonsV);
+		CLEAN_CALLBACK(GeneralPolygonV);
+		CLEAN_CALLBACK(PointsGeneralPolygonsV);
+
+		CLEAN_CALLBACK(SubdivisionMeshV);
+		CLEAN_CALLBACK(HierarchicalSubdivisionMeshV);
+
+		// PROCEDURAL
+		CLEAN_CALLBACK(DelayedReadArchive);
+		CLEAN_CALLBACK(RunProgram);
+		CLEAN_CALLBACK(DynamicLoad);
 	};
 
 	// DESTROY
@@ -824,18 +900,25 @@ MATRICES(ConcatTransform);
 MATRICES(Transform);
 
 // TOKEN-DICTIONARY
-#define TOKEN_DICTIONARY(callback) CALLBACKFN(callback)(RtToken name, RtInt n, RtToken tk[], RtPointer vl[]) \
+
+#define DICT RtInt n, RtToken tk[], RtPointer vl[]
+
+#define CALLV(method,part) PyObject* pDict = PyDict_New();	\
+PyTuple_SetItem(pArgs, part, pDict); \
+if(ParseDictionary(pDict, n, tk, vl)) \
+{ \
+	GETFILTER; \
+	PyObject* pResult = PyObject_CallObject(filter->_##method##Func, pArgs); \
+	Py_XDECREF(pResult); \
+}; \
+Py_XDECREF(pArgs);
+
+#define TOKEN_DICTIONARY(callback) CALLBACKFN(callback)(RtToken name, DICT) \
 { \
 	PyObject* pArgs = PyTuple_New(2); \
 	PyObject* pName = Py_BuildValue("s",name);	\
 	PyTuple_SetItem(pArgs, 0, pName); \
-	PyObject* pDict = PyDict_New();	\
-	PyTuple_SetItem(pArgs, 1, pDict); \
-	ParseDictionary(pDict, n, tk, vl);	\
-	GETFILTER; \
-	PyObject* pResult = PyObject_CallObject(filter->_##callback##Func, pArgs); \
-	Py_XDECREF(pResult); \
-	Py_XDECREF(pArgs); \
+	CALLV(##callback##,1) \
 };
 
 //CALLBACKFN(AttributeV)(RtToken name, RtInt n, RtToken tk[], RtPointer vl[])
@@ -873,37 +956,25 @@ TOKEN_DICTIONARY(EditWorldBeginV);
 TOKEN_DICTIONARY(ImagerV);
 
 // DUO-TOKENS/DICT
-#define DUO_TOKEN_DICTIONARY(callback) CALLBACKFN(callback)(RtToken one, RtToken two, RtInt n, RtToken tk[], RtPointer vl[]) \
+#define DUO_TOKEN_DICTIONARY(callback) CALLBACKFN(callback)(RtToken one, RtToken two, DICT) \
 { \
 	PyObject* pArgs = PyTuple_New(3); \
 	PyObject* pOne = Py_BuildValue("s",one);	\
 	PyTuple_SetItem(pArgs, 0, pOne); \
 	PyObject* pTwo = Py_BuildValue("s",two);	\
 	PyTuple_SetItem(pArgs, 1, pTwo); \
-	PyObject* pDict = PyDict_New();	\
-	PyTuple_SetItem(pArgs, 2, pDict); \
-	ParseDictionary(pDict, n, tk, vl);	\
-	GETFILTER; \
-	PyObject* pResult = PyObject_CallObject(filter->_##callback##Func, pArgs); \
-	Py_XDECREF(pResult); \
-	Py_XDECREF(pArgs); \
+	CALLV(##callback##,2) \
 };
 
 DUO_TOKEN_DICTIONARY(ResourceV);
 DUO_TOKEN_DICTIONARY(ShaderV);
 
-RtArchiveHandle Riffler::_ArchiveBeginV(RtToken name, RtInt n, RtToken tk[], RtPointer vl[])
+RtArchiveHandle Riffler::_ArchiveBeginV(RtToken name, DICT)
 {
 	PyObject* pArgs = PyTuple_New(2);
 	PyObject* pName = Py_BuildValue("s",name);
 	PyTuple_SetItem(pArgs, 0, pName);
-	PyObject* pDict = PyDict_New();
-	PyTuple_SetItem(pArgs, 1, pDict);
-	ParseDictionary(pDict, n, tk, vl);
-	GETFILTER;
-	PyObject* pResult = PyObject_CallObject(filter->_ArchiveBeginVFunc, pArgs);
-	Py_XDECREF(pResult);
-	Py_XDECREF(pArgs);
+	CALLV(ArchiveBeginV,1)
 
 	// STUB
 	for(int i=0;i<n;i++)
@@ -919,21 +990,12 @@ RtArchiveHandle Riffler::_ArchiveBeginV(RtToken name, RtInt n, RtToken tk[], RtP
 	return h;
 };
 
-RtLightHandle Riffler::_LightSourceV(RtToken name, RtInt n, RtToken tk[], RtPointer vl[])
+RtLightHandle Riffler::_LightSourceV(RtToken name, DICT)
 {
 	PyObject* pArgs = PyTuple_New(2);
 	PyObject* pName = Py_BuildValue("s",name);
 	PyTuple_SetItem(pArgs, 0, pName);
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-
-	PyTuple_SetItem(pArgs, 1, pDict);
-
-	GETFILTER;
-	PyObject* pResult = PyObject_CallObject(filter->_LightSourceVFunc, pArgs);
-
-	Py_XDECREF(pResult);
-	Py_XDECREF(pArgs);
+	CALLV(LightSourceV,1)
 
 	// STUB
 	for(int i=0;i<n;i++)
@@ -949,22 +1011,12 @@ RtLightHandle Riffler::_LightSourceV(RtToken name, RtInt n, RtToken tk[], RtPoin
 };
 
 // MISC FUNCTIONS
-
-RtVoid Riffler::_ReadArchiveV(RtToken name, RtArchiveCallback callback, RtInt n, RtToken tk[], RtPointer vl[])
+RtVoid Riffler::_ReadArchiveV(RtToken name, RtArchiveCallback callback, DICT)
 {
 	PyObject* pArgs = PyTuple_New(2);
 	PyObject* pName = Py_BuildValue("s",name);
 	PyTuple_SetItem(pArgs, 0, pName);
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-
-	PyTuple_SetItem(pArgs, 1, pDict);
-
-	GETFILTER;
-	PyObject* pResult = PyObject_CallObject(filter->_ReadArchiveVFunc, pArgs);
-
-	Py_XDECREF(pResult);
-	Py_XDECREF(pArgs);
+	CALLV(ReadArchiveV,1)
 };
 
 RtVoid Riffler::_MotionBeginV(RtInt n, RtFloat times[])
@@ -1030,24 +1082,14 @@ RtVoid Riffler::_Illuminate(RtLightHandle light, RtBoolean onoff)
 	Py_XDECREF(pArgs);
 };
 
-RtVoid Riffler::_DisplayV(char *name, RtToken type, RtToken mode, RtInt n, RtToken tk[], RtPointer vl[])
+RtVoid Riffler::_DisplayV(char *name, RtToken type, RtToken mode, DICT)
 {
 	PyObject* pArgs = PyTuple_New(4);
 
 	PyTuple_SetItem(pArgs, 0, Py_BuildValue("s",name));
 	PyTuple_SetItem(pArgs, 1, Py_BuildValue("s",type));
 	PyTuple_SetItem(pArgs, 2, Py_BuildValue("s",mode));
-	
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-
-	PyTuple_SetItem(pArgs, 3, pDict);
-
-	GETFILTER;
-	PyObject* pResult = PyObject_CallObject(filter->_DisplayVFunc, pArgs);
-
-	Py_XDECREF(pResult);
-	Py_XDECREF(pArgs);
+	CALLV(DisplayV,3)
 };
 
 PyObject* getFilterName(RtFilterFunc filterFunc)
@@ -1121,7 +1163,7 @@ RtVoid Riffler::_VArchiveRecord(RtToken type, char *format, va_list)
 	Py_XDECREF(pArgs);
 };
 
-RtVoid Riffler::_MakeTextureV(char *pic, char *tex, 	RtToken swrap, RtToken twrap,	RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tk[], RtPointer vl[])
+RtVoid Riffler::_MakeTextureV(char *pic, char *tex, 	RtToken swrap, RtToken twrap,	RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, DICT)
 {
 	PyObject* pArgs = PyTuple_New(6);
 
@@ -1130,92 +1172,42 @@ RtVoid Riffler::_MakeTextureV(char *pic, char *tex, 	RtToken swrap, RtToken twra
 	PyTuple_SetItem(pArgs,2,Py_BuildValue("(ss)",swrap,twrap));
 	PyTuple_SetItem(pArgs,3,getFilterName(filterFunc));
 	PyTuple_SetItem(pArgs,4,Py_BuildValue("(ff)",swidth,twidth));
-
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-	PyTuple_SetItem(pArgs, 5, pDict);
-
-	if(res)
-	{
-		GETFILTER;
-		PyObject* pResult = PyObject_CallObject(filter->_MakeTextureVFunc, pArgs);
-		Py_XDECREF(pResult);
-	};
-
-	Py_XDECREF(pArgs);
+	CALLV(MakeTextureV,5)
 };
 
-RtVoid Riffler::_MakeShadowV(char *pic, char *tex, RtInt n, RtToken tk[], RtPointer vl[])
+RtVoid Riffler::_MakeShadowV(char *pic, char *tex, DICT)
 {
 	PyObject* pArgs = PyTuple_New(3);
 
 	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",pic));
 	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",tex));
-
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-	PyTuple_SetItem(pArgs, 3, pDict);
-
-	if(res)
-	{
-		GETFILTER;
-		PyObject* pResult = PyObject_CallObject(filter->_MakeShadowVFunc, pArgs);
-		Py_XDECREF(pResult);
-	};
-
-	Py_XDECREF(pArgs);
+	CALLV(MakeShadowV,2)
 };
 
 RtVoid Riffler::_MakeCubeFaceEnvironmentV(
 	char *px, char *nx, char *py, char *ny, char *pz, char *nz, char *tex, 
-	RtFloat fov,	 RtFilterFunc filterFunc,	RtFloat swidth, RtFloat ywidth, RtInt n, RtToken tk[], RtPointer vl[])
+	RtFloat fov,	 RtFilterFunc filterFunc,	RtFloat swidth, RtFloat ywidth, DICT)
 {
 	PyObject* pArgs = PyTuple_New(6);
-
 	PyTuple_SetItem(pArgs,0,Py_BuildValue("(ssssss(",px,nx,py,ny,pz,nz));
 	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",tex));
 	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",fov));
 	PyTuple_SetItem(pArgs,3,getFilterName(filterFunc));
 	PyTuple_SetItem(pArgs,4,Py_BuildValue("(ff)",swidth,ywidth));
-
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-	PyTuple_SetItem(pArgs, 5, pDict);
-
-	if(res)
-	{
-		GETFILTER;
-		PyObject* pResult = PyObject_CallObject(filter->_MakeTextureVFunc, pArgs);
-		Py_XDECREF(pResult);
-	};
-
-	Py_XDECREF(pArgs);
+	CALLV(MakeTextureV,5)
 };
 
-RtVoid Riffler::_MakeLatLongEnvironmentV(char *pic, char *tex, RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tk[], RtPointer vl[])
+RtVoid Riffler::_MakeLatLongEnvironmentV(char *pic, char *tex, RtFilterFunc filterFunc, RtFloat swidth, RtFloat twidth, DICT)
 {
 	PyObject* pArgs = PyTuple_New(5);
-
 	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",pic));
 	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",tex));
 	PyTuple_SetItem(pArgs,2,getFilterName(filterFunc));
 	PyTuple_SetItem(pArgs,3,Py_BuildValue("(ff)",swidth,twidth));
-
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-	PyTuple_SetItem(pArgs, 4, pDict);
-
-	if(res)
-	{
-		GETFILTER;
-		PyObject* pResult = PyObject_CallObject(filter->_MakeLatLongEnvironmentVFunc, pArgs);
-		Py_XDECREF(pResult);
-	};
-
-	Py_XDECREF(pArgs);
+	CALLV(MakeLatLongEnvironmentV,4)
 };
 
-RtVoid Riffler::_MakeBrickMapV(RtInt cnt, RtToken* maps, RtToken brickmap, RtInt n, RtToken tk[], RtPointer vl[])
+RtVoid Riffler::_MakeBrickMapV(RtInt cnt, RtToken* maps, RtToken brickmap, DICT)
 {
 	if(cnt < 1) return;
 
@@ -1226,19 +1218,408 @@ RtVoid Riffler::_MakeBrickMapV(RtInt cnt, RtToken* maps, RtToken brickmap, RtInt
 
 	PyTuple_SetItem(pArgs,0,pM);
 	PyTuple_SetItem(pArgs,1,Py_BuildValue("s",brickmap));
-
-	PyObject* pDict = PyDict_New();
-	bool res = ParseDictionary(pDict, n, tk, vl);
-	PyTuple_SetItem(pArgs, 3, pDict);
-
-	if(res)
-	{
-		GETFILTER;
-		PyObject* pResult = PyObject_CallObject(filter->_MakeBrickMapVFunc, pArgs);
-		Py_XDECREF(pResult);
-	};
-
-	Py_XDECREF(pArgs);
+	CALLV(MakeBrickMapV,2)
 };
 
 // GPRIMS
+RtVoid Riffler::_SphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat tmax, DICT)
+{
+	PyObject* pArgs = PyTuple_New(5);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("f",radius));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("f",zmin));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",zmax));
+	PyTuple_SetItem(pArgs,3,Py_BuildValue("f",tmax));
+	CALLV(SphereV,4)
+};
+
+RtVoid Riffler::_ConeV(RtFloat height, RtFloat radius, RtFloat tmax, DICT)
+{
+	PyObject* pArgs = PyTuple_New(4);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("f",height));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("f",radius));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",tmax));
+	CALLV(ConeV,3)
+};
+
+RtVoid Riffler::_CylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat tmax, DICT)
+{
+	PyObject* pArgs = PyTuple_New(5);
+
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("f",radius));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("f",zmin));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",zmax));
+	PyTuple_SetItem(pArgs,3,Py_BuildValue("f",tmax));
+	CALLV(CylinderV,4)
+};
+
+RtVoid Riffler::_DiskV(RtFloat height, RtFloat radius, RtFloat tmax, DICT)
+{
+	PyObject* pArgs = PyTuple_New(4);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("f",height));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("f",radius));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",tmax));
+	CALLV(DiskV,3)
+};
+
+RtVoid Riffler::_TorusV(RtFloat majrad, RtFloat minrad, RtFloat phimin, RtFloat phimax, RtFloat tmax, DICT)
+{
+	PyObject* pArgs = PyTuple_New(6);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("f",majrad));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("f",minrad));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",phimin));
+	PyTuple_SetItem(pArgs,3,Py_BuildValue("f",phimax));
+	PyTuple_SetItem(pArgs,4,Py_BuildValue("f",tmax));
+	CALLV(TorusV,5)
+};
+
+RtVoid Riffler::_ParaboloidV(RtFloat a1, RtFloat a2, RtFloat a3, RtFloat a4, DICT)
+{
+	PyObject* pArgs = PyTuple_New(5);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("f",a1));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("f",a2));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",a3));
+	PyTuple_SetItem(pArgs,3,Py_BuildValue("f",a4));
+	CALLV(ParaboloidV,4)
+};
+
+inline PyObject* getAPoint(RtPoint p)
+{
+	return Py_BuildValue("(fff)",p[0],p[1],p[2]);
+};
+
+RtVoid Riffler::_HyperboloidV(RtPoint point1, RtPoint point2,RtFloat a1, DICT)
+{
+	PyObject* pArgs = PyTuple_New(4);
+	PyTuple_SetItem(pArgs,0,getAPoint(point1));
+	PyTuple_SetItem(pArgs,1,getAPoint(point2));
+	PyTuple_SetItem(pArgs,2,Py_BuildValue("f",a1));
+	CALLV(HyperboloidV,3)
+};
+
+bool ParseDictionaryUVVF(PyObject* dict, DICT, int uniform, int varying, int vertex, int facevarying);
+
+#define CALLCV(method,part) PyObject* pDict = PyDict_New();	\
+	PyTuple_SetItem(pArgs, part, pDict); \
+	if(ParseDictionaryUVVF(pDict, n, tk, vl,uniform,varying,vertex,facevarying)) \
+{ \
+	GETFILTER; \
+	PyObject* pResult = PyObject_CallObject(filter->_##method##Func, pArgs); \
+	Py_XDECREF(pResult); \
+	}; \
+	Py_XDECREF(pArgs);
+
+RtVoid Riffler::_PointsV(RtInt nverts, DICT)
+{
+	PyObject* pArgs = PyTuple_New(2);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("i",nverts));
+	int uniform = 1; int varying = nverts; int vertex = nverts; int facevarying = nverts;
+	CALLCV(PointsV,2)
+};
+
+RtVoid Riffler::_PolygonV(RtInt nverts, DICT)
+{
+	PyObject* pArgs = PyTuple_New(2);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("i",nverts));
+	int uniform = 1; int varying = nverts; int vertex = nverts; int facevarying = nverts;
+	CALLCV(PolygonV,2)
+};
+
+RtVoid Riffler::_PointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], DICT)
+{
+	if(npolys < 1) return;
+
+	PyObject* pArgs = PyTuple_New(2);
+
+	int uniform = npolys; int varying = 0; int vertex = 0; int facevarying = 0;
+
+	int* vtx = verts;
+	PyObject* pP = PyTuple_New(npolys);
+	for(int i=0;i<npolys;i++)
+	{
+		int nv = nverts[i];
+		facevarying += nv;
+		PyObject* pL = PyTuple_New(nv);
+		for(int j=0;j<nv;j++)
+		{
+			PyTuple_SetItem(pL,j,Py_BuildValue("i",vtx[j]));
+			if(vtx[j]>vertex) vertex=vtx[j];
+		}
+		PyTuple_SetItem(pP,i,pL);
+		vtx+=nv;
+	};
+	vertex++; varying=vertex;
+	PyTuple_SetItem(pArgs,0,pP);
+	CALLCV(PointsPolygonsV,2)
+};
+
+RtVoid Riffler::_GeneralPolygonV(RtInt nloops, RtInt nverts[], DICT)
+{
+	if(nloops < 1) return;
+
+	PyObject* pArgs = PyTuple_New(2);
+
+	int uniform = 1; int varying = 0; int vertex = 0; int facevarying = 0;
+
+	PyObject* pP = PyTuple_New(nloops);
+	for(int i=0;i<nloops;i++)
+	{
+		int nv = nverts[i];
+		PyTuple_SetItem(pP,i,Py_BuildValue("i",nverts[i]));
+		facevarying += nv;
+	};
+	vertex=varying=facevarying;
+	PyTuple_SetItem(pArgs,0,pP);
+	CALLCV(PolygonV,2)
+};
+
+RtVoid Riffler::_PointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], DICT)
+{
+	if(npolys < 1) return;
+
+	PyObject* pArgs = PyTuple_New(2);
+
+	int uniform = npolys; int varying = 0; int vertex = 0; int facevarying = 0;
+
+	int* vtx = verts;
+	int* nvtx = nverts;
+	PyObject* pP = PyTuple_New(npolys);
+	for(int i=0;i<npolys;i++)
+	{
+		int nl = nloops[i];
+		int nv = 0;
+		for(int j=0;j<nl;j++) nv+=nvtx[j];
+		nvtx+=nl;
+
+		facevarying += nv;
+
+		PyObject* pL = PyTuple_New(nv);
+		for(int j=0;j<nv;j++)
+		{
+			PyTuple_SetItem(pL,j,Py_BuildValue("i",vtx[j]));
+			if(vtx[j]>vertex) vertex=vtx[j];
+		}
+		vtx+=nv;
+
+		PyTuple_SetItem(pP,i,pL);
+	};
+	vertex++; varying=vertex;
+	PyTuple_SetItem(pArgs,0,pP);
+	CALLCV(PointsGeneralPolygonsV,2)
+};
+
+RtVoid Riffler::_SubdivisionMeshV(RtToken mask, 
+					RtInt nf, RtInt nverts[], RtInt verts[], 
+					RtInt nt, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], DICT)
+{
+	if(nf < 1) return;
+
+	PyObject* pArgs = PyTuple_New(4);
+
+	// MASK
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",mask));
+
+	// VERTEX
+	int uniform = nf; int varying = 0; int vertex = 0; int facevarying = 0;
+
+	int* vtx = verts;
+	PyObject* pP = PyTuple_New(nf);
+	for(int i=0;i<nf;i++)
+	{
+		int nv = nverts[i];
+		facevarying += nv;
+		PyObject* pL = PyTuple_New(nv);
+		for(int j=0;j<nv;j++)
+		{
+			PyTuple_SetItem(pL,j,Py_BuildValue("i",vtx[j]));
+			if(vtx[j]>vertex) vertex=vtx[j];
+		}
+		PyTuple_SetItem(pP,i,pL);
+		vtx+=nv;
+	};
+	vertex++; varying=vertex;
+	PyTuple_SetItem(pArgs,1,pP);
+
+	// TAG PROCESSING
+	PyObject* pT = PyTuple_New(nt);
+
+	RtInt* pia = intargs;
+	RtFloat* pfa = floatargs;
+
+	for(int i=0;i<nt;i++)
+	{
+		PyObject* pt = PyTuple_New(3);
+
+		// TAG
+		PyTuple_SetItem(pt,0,Py_BuildValue("s",tags[i]));
+		
+		// INTS
+		{
+			int ia = nargs[2*i];
+			PyObject* pti = PyTuple_New(ia);
+			for(int j=0;j<ia;j++) PyTuple_SetItem(pti,j,Py_BuildValue("i",pia[j]));
+			pia += ia;
+			PyTuple_SetItem(pt,1,pti);
+		}
+
+		// FLOATS
+		{
+			int fa = nargs[2*i+1];
+			PyObject* ptf = PyTuple_New(fa);
+			for(int j=0;j<fa;j++) PyTuple_SetItem(ptf,j,Py_BuildValue("f",pfa[j]));
+			pfa += fa;
+			PyTuple_SetItem(pt,2,ptf);
+		}
+	};
+
+	PyTuple_SetItem(pArgs,2,pT);
+
+	// DICT
+	CALLCV(SubdivisionMeshV,3)
+};
+
+RtVoid Riffler::_HierarchicalSubdivisionMeshV(
+	RtToken mask, 
+	RtInt nf, RtInt nverts[], RtInt verts[], 
+	RtInt nt, RtToken tags[],	RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], DICT)
+{
+	if(nf < 1) return;
+
+	PyObject* pArgs = PyTuple_New(4);
+
+	// MASK
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",mask));
+
+	// VERTEX
+	int uniform = nf; int varying = 0; int vertex = 0; int facevarying = 0;
+
+	int* vtx = verts;
+	PyObject* pP = PyTuple_New(nf);
+	for(int i=0;i<nf;i++)
+	{
+		int nv = nverts[i];
+		facevarying += nv;
+		PyObject* pL = PyTuple_New(nv);
+		for(int j=0;j<nv;j++)
+		{
+			PyTuple_SetItem(pL,j,Py_BuildValue("i",vtx[j]));
+			if(vtx[j]>vertex) vertex=vtx[j];
+		}
+		PyTuple_SetItem(pP,i,pL);
+		vtx+=nv;
+	};
+	vertex++; varying=vertex;
+	PyTuple_SetItem(pArgs,1,pP);
+
+	// TAG PROCESSING
+	PyObject* pT = PyTuple_New(nt);
+
+	RtInt* pia = intargs;
+	RtFloat* pfa = floatargs;
+	RtToken* psa = stringargs;
+
+	for(int i=0;i<nt;i++)
+	{
+		PyObject* pt = PyTuple_New(4);
+
+		// TAG
+		PyTuple_SetItem(pt,0,Py_BuildValue("s",tags[i]));
+		
+		// INTS
+		{
+			int ia = nargs[3*i];
+			PyObject* pti = PyTuple_New(ia);
+			for(int j=0;j<ia;j++) PyTuple_SetItem(pti,j,Py_BuildValue("i",pia[j]));
+			pia += ia;
+			PyTuple_SetItem(pt,1,pti);
+		}
+
+		// FLOATS
+		{
+			int fa = nargs[3*i+1];
+			PyObject* ptf = PyTuple_New(fa);
+			for(int j=0;j<fa;j++) PyTuple_SetItem(ptf,j,Py_BuildValue("f",pfa[j]));
+			pfa += fa;
+			PyTuple_SetItem(pt,2,ptf);
+		}
+
+		// STRINGS
+		{
+			int sa = nargs[3*i+2];
+			PyObject* pts = PyTuple_New(sa);
+			for(int j=0;j<sa;j++) PyTuple_SetItem(pts,j,Py_BuildValue("s",psa[j]));
+			psa += sa;
+			PyTuple_SetItem(pt,3,pts);
+		}
+	};
+
+	PyTuple_SetItem(pArgs,2,pT);
+
+	// DICT
+	CALLCV(HierarchicalSubdivisionMeshV,3)
+};
+
+RtVoid Riffler::_Procedural(RtPointer data, RtBound b, RtProcSubdivFunc sdfunc, RtProcFreeFunc freefunc)
+{
+	PyObject* bound = Py_BuildValue("((ff)(ff)(ff))",b[0],b[1],b[2],b[3],b[4],b[5]);
+
+	// DRA
+	if(sdfunc == RiProcDelayedReadArchive)
+	{
+		GETFILTER
+		if(filter->_DelayedReadArchiveFunc == NULL) return;
+
+		PyObject* pArgs = PyTuple_New(2);
+		PyTuple_SetItem(pArgs, 0, bound);
+		PyTuple_SetItem(pArgs, 1, Py_BuildValue("s",((char**)data)[0]));
+
+		PyObject* pResult = PyObject_CallObject(filter->_DelayedReadArchiveFunc, pArgs);
+
+		Py_XDECREF(pResult);
+		Py_XDECREF(pArgs);
+
+		return;
+	};
+
+	// RUN PROGRAM
+	if(sdfunc == RiProcRunProgram)
+	{
+		GETFILTER
+		if(filter->_RunProgramFunc == NULL) return;
+
+		PyObject* pArgs = PyTuple_New(3);
+		PyTuple_SetItem(pArgs, 0, bound);
+		PyTuple_SetItem(pArgs, 1, Py_BuildValue("s",((char**)data)[0]));
+		PyTuple_SetItem(pArgs, 2, Py_BuildValue("s",((char**)data)[1]));
+
+		PyObject* pResult = PyObject_CallObject(filter->_RunProgramFunc, pArgs);
+
+		Py_XDECREF(pResult);
+		Py_XDECREF(pArgs);
+
+		return;
+	};
+
+	// DYNAMIC LOAD
+	if(sdfunc == RiProcDynamicLoad)
+	{
+		GETFILTER
+		if(filter->_DynamicLoadFunc == NULL) return;
+
+		PyObject* pArgs = PyTuple_New(3);
+		PyTuple_SetItem(pArgs, 0, bound);
+		PyTuple_SetItem(pArgs, 1, Py_BuildValue("s",((char**)data)[0]));
+		PyTuple_SetItem(pArgs, 2, Py_BuildValue("s",((char**)data)[1]));
+
+		PyObject* pResult = PyObject_CallObject(filter->_DynamicLoadFunc, pArgs);
+
+		Py_XDECREF(pResult);
+		Py_XDECREF(pArgs);
+
+		return;
+	};
+};
+
+
+
+
+
