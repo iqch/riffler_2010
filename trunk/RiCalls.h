@@ -6,7 +6,7 @@
 *	RiCalls.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module header
 *
-*	Version: 0.8
+*	Version: 0.9
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -161,6 +161,13 @@ DEFINE_RICALL(MakeLatLongEnvironmentV);
 DEFINE_RICALL(MakeBrickMapV);
 
 // GPRIMS
+DEFINE_RICALL(SphereV);
+DEFINE_RICALL(ConeV);
+DEFINE_RICALL(CylinderV);
+DEFINE_RICALL(DiskV);
+DEFINE_RICALL(TorusV);
+DEFINE_RICALL(ParaboloidV);
+DEFINE_RICALL(HyperboloidV);
 
 // TABLE
 #define RI_METHOD(method) {#method, _Ri##method, METH_VARARGS,""}
@@ -314,6 +321,13 @@ static PyMethodDef MethodTable[] = {
 	RI_METHODV(MakeBrickMap),
 
 	// GPRIMS
+	RI_METHODV(Sphere),
+	RI_METHODV(Cone),
+	RI_METHODV(Cylinder),
+	RI_METHODV(Disk),
+	RI_METHODV(Torus),
+	RI_METHODV(Paraboloid),
+	RI_METHODV(Hyperboloid),
 
 	// END
 	{NULL, NULL, 0, NULL}

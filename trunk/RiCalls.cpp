@@ -6,7 +6,7 @@
 *	RiCalls.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Embedded module source
 *
-*	Version: 0.8
+*	Version: 0.9
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -528,7 +528,7 @@ DEFINE_RICALL(VArchiveRecord)
 
 	va_list v;
 
-	RiVArchiveRecord(RI_VERBATIM,cmnt,v);
+	RiVArchiveRecord(RI_COMMENT,cmnt,v);
 
 	delete [] cmnt;
 
@@ -703,4 +703,168 @@ DEFINE_RICALL(MakeBrickMapV)
 };
 
 // GPRIMS
+DEFINE_RICALL(SphereV)
+{
+	if(PyTuple_Size(args) != 5) FAIL;
+
+	RtFloat radius = PyFloat_AsDouble(PyTuple_GetItem(args,0));
+	RtFloat zmin = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat zmax = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+	RtFloat tmax = PyFloat_AsDouble(PyTuple_GetItem(args,3));
+
+	PyObject* dict =  PyTuple_GetItem(args,4);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiSphereV(radius,zmin,zmax,tmax,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(ConeV)
+{
+	if(PyTuple_Size(args) != 4) FAIL;
+
+	RtFloat height = PyFloat_AsDouble(PyTuple_GetItem(args,0));
+	RtFloat radius = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat tmax = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+
+	PyObject* dict =  PyTuple_GetItem(args,3);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+		if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiConeV(height,radius,tmax,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(CylinderV)
+{
+	if(PyTuple_Size(args) != 5) FAIL;
+
+	RtFloat radius = PyFloat_AsDouble(PyTuple_GetItem(args,0));
+	RtFloat zmin = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat zmax = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+	RtFloat tmax = PyFloat_AsDouble(PyTuple_GetItem(args,3));
+
+	PyObject* dict =  PyTuple_GetItem(args,4);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiCylinderV(radius,zmin,zmax,tmax,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(DiskV)
+{
+	if(PyTuple_Size(args) != 4) FAIL;
+
+	RtFloat height = PyFloat_AsDouble(PyTuple_GetItem(args,0));
+	RtFloat radius = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat tmax = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+
+	PyObject* dict =  PyTuple_GetItem(args,3);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiDiskV(height,radius,tmax,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(TorusV)
+{
+	if(PyTuple_Size(args) != 6) FAIL;
+
+	RtFloat a1 = PyFloat_AsDouble(PyTuple_GetItem(args,0));
+	RtFloat a2 = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat a3 = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+	RtFloat a4 = PyFloat_AsDouble(PyTuple_GetItem(args,3));
+	RtFloat a5 = PyFloat_AsDouble(PyTuple_GetItem(args,4));
+
+	PyObject* dict =  PyTuple_GetItem(args,5);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiTorusV(a1,a2,a3,a4,a5,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(ParaboloidV)
+{
+	if(PyTuple_Size(args) != 5) FAIL;
+
+	RtFloat a1 = PyFloat_AsDouble(PyTuple_GetItem(args,0));
+	RtFloat a2 = PyFloat_AsDouble(PyTuple_GetItem(args,1));
+	RtFloat a3 = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+	RtFloat a4 = PyFloat_AsDouble(PyTuple_GetItem(args,3));
+
+	PyObject* dict =  PyTuple_GetItem(args,4);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiParaboloidV(a1,a2,a3,a4,n,tk,vl);
+	}
+	DisposeTKVL(n,tk,vl);
+
+	SUCCESS
+};
+
+inline bool getAPoint(PyObject* o, RtPoint p)
+{
+	if(!PyTuple_Check(o)) return false;
+	if(PyTuple_Size(o) != 3) return false;
+	p[0] = PyFloat_AsDouble(PyTuple_GetItem(o,0));
+	p[1] = PyFloat_AsDouble(PyTuple_GetItem(o,1));
+	p[2] = PyFloat_AsDouble(PyTuple_GetItem(o,2));
+	return true;
+};
+
+DEFINE_RICALL(HyperboloidV)
+{
+	if(PyTuple_Size(args) != 4) FAIL;
+
+	RtPoint p0;
+	if(!getAPoint(PyTuple_GetItem(args,0),p0)) FAIL;
+	RtPoint p1;
+	if(!getAPoint(PyTuple_GetItem(args,1),p1)) FAIL;
+
+	RtFloat a1 = PyFloat_AsDouble(PyTuple_GetItem(args,2));
+
+	PyObject* dict =  PyTuple_GetItem(args,3);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiHyperboloidV(p0,p1,a1,n,tk,vl);
+	DisposeTKVL(n,tk,vl);
+
+	SUCCESS
+};
+
+
+
 

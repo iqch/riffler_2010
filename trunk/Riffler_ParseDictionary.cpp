@@ -6,13 +6,15 @@
 *	Riffler_ParseDictionary.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Dictionary parsing source
 *
-*	Version: 0.8
+*	Version: 0.9
 *	Authors: Egor N. Chashchin
 *	Contact: iqcook@gmail.com
 *
 */
 
 #include "stdafx.h"
+
+// SIMPLE
 
 bool ParseDictionary(PyObject* dict, int n, RtToken tk[], RtPointer vl[])
 {
@@ -417,4 +419,534 @@ bool DisposeTKVL(int n, RtToken* tk, RtPointer* vl)
 	delete [] vl;
 
 	return true;
-}
+};
+
+//  COMPLEX
+
+bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], int uniform, int varying, int vertex, int facevarying)
+{
+	RifTokenType tokType;
+	RifTokenDetail tokDetail;
+	RtInt arraylen;
+
+	for(int i=0;i<n;i++)
+	{
+		RtToken t = tk[i];
+		RtPointer p =vl[i];
+		RtInt res = RifGetDeclaration(t, &tokType, &tokDetail, &arraylen);
+
+		if(res != 0)
+		{
+			continue;
+		}
+
+		switch(tokType)
+		{
+		case k_RifFloat: // FLOAT
+			if(arraylen == 1)
+			{
+				// JUST FLOAT
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+					PyDict_SetItemString(dict, t, Py_BuildValue("f",*((float*)p)));
+					break;
+				case k_RifUniform:
+					{
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+					{
+						PyObject* A = PyTuple_New(varying);
+						for(int j=0;j<varying;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVertex:
+					{
+						PyObject* A = PyTuple_New(vertex);
+						for(int j=0;j<vertex;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifFaceVarying:
+					{
+						PyObject* A = PyTuple_New(facevarying);
+						for(int j=0;j<facevarying;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				default:
+					return false;
+				};
+			}
+			else
+			{
+				// ARRAY
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+					{
+						PyObject* pArgs = PyTuple_New(arraylen);
+						float* P = (float*)p;
+						for(int j=0;j<arraylen;j++) PyTuple_SetItem(pArgs, j, Py_BuildValue("f",P[j]));
+						PyDict_SetItemString(dict, t, pArgs);
+					}
+					break;
+				case k_RifUniform:
+					{
+						float* P = (float*)p;
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("f",*P));
+								P+=1;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+					{
+						float* P = (float*)p;
+						PyObject* A = PyTuple_New(varying);
+						for(int j=0;j<varying;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("f",*P));
+								P+=1;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVertex:
+					{
+						float* P = (float*)p;
+						PyObject* A = PyTuple_New(vertex);
+						for(int j=0;j<vertex;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("f",*P));
+								P+=1;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifFaceVarying:
+					{
+						float* P = (float*)p;
+						PyObject* A = PyTuple_New(facevarying);
+						for(int j=0;j<facevarying;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("f",*P));
+								P+=1;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				default:
+					return false;
+				};
+			};
+			break;
+		case k_RifString: // STRING/SHADER
+			if(arraylen == 1)
+			{
+				// JUST STRING
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+					{
+						const char* strval = ((RtToken*)(p))[0];
+						PyDict_SetItemString(dict, t, Py_BuildValue("s",strval));
+					}
+					break;
+				case k_RifUniform:
+					{
+						char** C = (char**)p;
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+						{
+							PyTuple_SetItem(A, j, Py_BuildValue("s",*C));
+							C+=1;
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+				case k_RifVertex:
+				case k_RifFaceVarying:
+				default:
+					return false;
+				};
+			}
+			else
+			{
+				// ARRAY
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+				case k_RifUniform:
+					{
+						char** C = (char**)p;
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("s",*C));
+								C+=1;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+				case k_RifVertex:
+				case k_RifFaceVarying:
+				default:
+					return false;
+				};
+				PyObject* pArgs = PyTuple_New(arraylen);
+				char** P = (char**)p;
+				for(int j=0;j<arraylen;j++) PyTuple_SetItem(pArgs, j, Py_BuildValue("s",P[j]));
+				PyDict_SetItemString(dict, t, pArgs);
+			};
+			break;
+		case k_RifColor: // COLOR
+		case k_RifPoint: // POINT
+		case k_RifVector: // VECTOR
+		case k_RifNormal: // NORMAL
+			if(arraylen == 1)
+			{
+				float* V = (float*)p;
+				// JUST POINT
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+					{
+						PyDict_SetItemString(dict, t, Py_BuildValue("(fff)",V[0],V[1],V[2]));
+					}
+					break;
+				case k_RifUniform:
+					{
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+						{
+							PyTuple_SetItem(A,j,Py_BuildValue("(fff)",V[0],V[1],V[2]));
+							V+=3;
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+					{
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+						{
+							PyTuple_SetItem(A,j,Py_BuildValue("(fff)",V[0],V[1],V[2]));
+							V+=3;
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVertex:
+					{
+						PyObject* A = PyTuple_New(vertex);
+						for(int j=0;j<vertex;j++)
+						{
+							PyTuple_SetItem(A,j,Py_BuildValue("(fff)",V[0],V[1],V[2]));
+							V+=3;
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifFaceVarying:
+					{
+						PyObject* A = PyTuple_New(facevarying);
+						for(int j=0;j<facevarying;j++)
+						{
+							PyTuple_SetItem(A,j,Py_BuildValue("(fff)",V[0],V[1],V[2]));
+							V+=3;
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				default:
+					return false;
+				};
+			}
+			else
+			{
+				// ARRAY
+				float* P = (float*)p;
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+					{
+						PyObject* pArgs = PyTuple_New(arraylen);
+						for(int j=0;j<arraylen;j++)
+						{
+							PyTuple_SetItem(pArgs, j, Py_BuildValue("(fff)",P[0],P[1],P[2]));
+							P+=3;
+						}
+						PyDict_SetItemString(dict, t, pArgs);
+					}
+				case k_RifUniform:
+					{
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("(fff)",P[0],P[1],P[2]));
+								P+=3;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+					{
+						PyObject* A = PyTuple_New(varying);
+						for(int j=0;j<varying;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("(fff)",P[0],P[1],P[2]));
+								P+=3;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVertex:
+					{
+						PyObject* A = PyTuple_New(vertex);
+						for(int j=0;j<vertex;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("(fff)",P[0],P[1],P[2]));
+								P+=3;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifFaceVarying:
+					{
+						PyObject* A = PyTuple_New(facevarying);
+						for(int j=0;j<facevarying;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("(fff)",P[0],P[1],P[2]));
+								P+=3;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				default:
+					return false;
+				};
+			};
+			break;
+		case k_RifMatrix: // MATRIX
+			if(arraylen == 1)
+			{
+				// JUST MATRIX
+				float* V = (float*)p;
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+					{
+						PyDict_SetItemString(dict, t, Py_BuildValue("((ffff)(ffff)(ffff)(ffff))"
+							,V[0],V[1],V[2],V[3],V[4],V[5],V[6],V[7]
+						,V[8],V[9],V[10],V[11],V[12],V[13],V[14],V[15]));
+					}
+					break;
+				case k_RifUniform:
+					{
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+								V[0],V[1],V[2],V[3],V[4],V[5],V[6],V[7],
+								V[8],V[9],V[10],V[11],V[12],V[13],V[14],V[15]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+					{
+						PyObject* A = PyTuple_New(varying);
+						for(int j=0;j<varying;j++)
+							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+								V[0],V[1],V[2],V[3],V[4],V[5],V[6],V[7],
+								V[8],V[9],V[10],V[11],V[12],V[13],V[14],V[15]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVertex:
+					{
+						PyObject* A = PyTuple_New(vertex);
+						for(int j=0;j<vertex;j++)
+							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+								V[0],V[1],V[2],V[3],V[4],V[5],V[6],V[7],
+								V[8],V[9],V[10],V[11],V[12],V[13],V[14],V[15]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifFaceVarying:
+					{
+						PyObject* A = PyTuple_New(facevarying);
+						for(int j=0;j<facevarying;j++)
+							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+								V[0],V[1],V[2],V[3],V[4],V[5],V[6],V[7],
+								V[8],V[9],V[10],V[11],V[12],V[13],V[14],V[15]));
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				default:
+					return false;
+				};
+			}
+			else
+			{
+				// ARRAY
+				float* P = (float*)p;
+				switch(tokDetail)
+				{
+				case k_RifConstant:
+					{
+						PyObject* pArgs = PyTuple_New(arraylen);
+						float* P = (float*)p;
+						for(int j=0;j<arraylen;j++)
+						{
+							PyTuple_SetItem(pArgs, j, Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+								P[0],P[1],P[2],P[3],P[4],P[5],P[6],P[7],
+								P[8],P[9],P[10],P[11],P[12],P[13],P[14],P[15]));
+							P+=16;
+						}
+						PyDict_SetItemString(dict, t, pArgs);
+					}
+					break;
+				case k_RifUniform:
+					{
+						PyObject* A = PyTuple_New(uniform);
+						for(int j=0;j<uniform;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+									P[0],P[1],P[2],P[3],P[4],P[5],P[6],P[7],
+									P[8],P[9],P[10],P[11],P[12],P[13],P[14],P[15]));
+								P+=16;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVarying:
+					{
+						PyObject* A = PyTuple_New(varying);
+						for(int j=0;j<varying;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+									P[0],P[1],P[2],P[3],P[4],P[5],P[6],P[7],
+									P[8],P[9],P[10],P[11],P[12],P[13],P[14],P[15]));
+								P+=16;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifVertex:
+					{
+						PyObject* A = PyTuple_New(vertex);
+						for(int j=0;j<vertex;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+									P[0],P[1],P[2],P[3],P[4],P[5],P[6],P[7],
+									P[8],P[9],P[10],P[11],P[12],P[13],P[14],P[15]));
+								P+=16;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				case k_RifFaceVarying:
+					{
+						PyObject* A = PyTuple_New(facevarying);
+						for(int j=0;j<facevarying;j++)
+						{
+							PyObject* a = PyTuple_New(arraylen);
+							for(int k=0;k<arraylen;k++) 
+							{
+								PyTuple_SetItem(a, k, Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
+									P[0],P[1],P[2],P[3],P[4],P[5],P[6],P[7],
+									P[8],P[9],P[10],P[11],P[12],P[13],P[14],P[15]));
+								P+=16;
+							};
+							PyTuple_SetItem(A, j, a);
+						}
+						PyDict_SetItemString(dict, t, A);
+					}
+					break;
+				default:
+					return false;
+				};
+			};
+			break;
+		case k_RifHPoint: // NOT SUPPORTED - RARE USING
+		case k_RifMPoint: // NOT SUPPORTED - NO INFO ABOUT FORMAT
+		case k_RifInteger: // INT IS UNSUPPORTED AS GEOMETRIC QUANTITY!
+		default:
+			continue;
+		};
+	};
+
+	//PyObject_Print(dict,stdout,Py_PRINT_RAW);
+
+	return true;
+};
