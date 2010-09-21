@@ -6,7 +6,7 @@
 *	Riffler_ParseDictionary.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Dictionary parsing source
 *
-*	Version: 0.9
+*	Version: 0.95
 *	Authors: Egor N. Chashchin
 *	Contact: iqcook@gmail.com
 *
@@ -435,10 +435,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 		RtPointer p =vl[i];
 		RtInt res = RifGetDeclaration(t, &tokType, &tokDetail, &arraylen);
 
-		if(res != 0)
-		{
-			continue;
-		}
+		if(res != 0) continue;
 
 		switch(tokType)
 		{
@@ -453,6 +450,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
 						PyDict_SetItemString(dict, t, A);
@@ -460,6 +458,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVarying:
 					{
+						if(varying == -1) break;
 						PyObject* A = PyTuple_New(varying);
 						for(int j=0;j<varying;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
 						PyDict_SetItemString(dict, t, A);
@@ -467,6 +466,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVertex:
 					{
+						if(vertex == -1) break;
 						PyObject* A = PyTuple_New(vertex);
 						for(int j=0;j<vertex;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
 						PyDict_SetItemString(dict, t, A);
@@ -474,6 +474,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifFaceVarying:
 					{
+						if(facevarying == -1) break;
 						PyObject* A = PyTuple_New(facevarying);
 						for(int j=0;j<facevarying;j++) PyTuple_SetItem(A,j,Py_BuildValue("f",((float*)p)[j]));
 						PyDict_SetItemString(dict, t, A);
@@ -498,6 +499,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						float* P = (float*)p;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++)
@@ -515,6 +517,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVarying:
 					{
+						if(varying == -1) break;
 						float* P = (float*)p;
 						PyObject* A = PyTuple_New(varying);
 						for(int j=0;j<varying;j++)
@@ -532,6 +535,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVertex:
 					{
+						if(vertex == -1) break;
 						float* P = (float*)p;
 						PyObject* A = PyTuple_New(vertex);
 						for(int j=0;j<vertex;j++)
@@ -549,6 +553,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifFaceVarying:
 					{
+						if(facevarying == -1) break;
 						float* P = (float*)p;
 						PyObject* A = PyTuple_New(facevarying);
 						for(int j=0;j<facevarying;j++)
@@ -583,6 +588,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						char** C = (char**)p;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++)
@@ -606,8 +612,16 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 				switch(tokDetail)
 				{
 				case k_RifConstant:
+					{
+						PyObject* pArgs = PyTuple_New(arraylen);
+						char** P = (char**)p;
+						for(int j=0;j<arraylen;j++) PyTuple_SetItem(pArgs, j, Py_BuildValue("s",P[j]));
+						PyDict_SetItemString(dict, t, pArgs);
+					}
+					break;
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						char** C = (char**)p;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++)
@@ -629,10 +643,6 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 				default:
 					return false;
 				};
-				PyObject* pArgs = PyTuple_New(arraylen);
-				char** P = (char**)p;
-				for(int j=0;j<arraylen;j++) PyTuple_SetItem(pArgs, j, Py_BuildValue("s",P[j]));
-				PyDict_SetItemString(dict, t, pArgs);
 			};
 			break;
 		case k_RifColor: // COLOR
@@ -652,6 +662,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++)
 						{
@@ -663,8 +674,9 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVarying:
 					{
-						PyObject* A = PyTuple_New(uniform);
-						for(int j=0;j<uniform;j++)
+						if(varying == -1) break;
+						PyObject* A = PyTuple_New(varying);
+						for(int j=0;j<varying;j++)
 						{
 							PyTuple_SetItem(A,j,Py_BuildValue("(fff)",V[0],V[1],V[2]));
 							V+=3;
@@ -674,6 +686,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVertex:
 					{
+						if(vertex == -1) break;
 						PyObject* A = PyTuple_New(vertex);
 						for(int j=0;j<vertex;j++)
 						{
@@ -685,6 +698,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifFaceVarying:
 					{
+						if(facevarying == -1) break;
 						PyObject* A = PyTuple_New(facevarying);
 						for(int j=0;j<facevarying;j++)
 						{
@@ -716,6 +730,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					}
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++)
 						{
@@ -732,6 +747,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVarying:
 					{
+						if(varying == -1) break;
 						PyObject* A = PyTuple_New(varying);
 						for(int j=0;j<varying;j++)
 						{
@@ -748,6 +764,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVertex:
 					{
+						if(vertex == -1) break;
 						PyObject* A = PyTuple_New(vertex);
 						for(int j=0;j<vertex;j++)
 						{
@@ -764,6 +781,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifFaceVarying:
 					{
+						if(facevarying == -1) break;
 						PyObject* A = PyTuple_New(facevarying);
 						for(int j=0;j<facevarying;j++)
 						{
@@ -799,6 +817,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++)
 							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
@@ -809,6 +828,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVarying:
 					{
+						if(varying == -1) break;
 						PyObject* A = PyTuple_New(varying);
 						for(int j=0;j<varying;j++)
 							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
@@ -819,6 +839,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVertex:
 					{
+						if(vertex == -1) break;
 						PyObject* A = PyTuple_New(vertex);
 						for(int j=0;j<vertex;j++)
 							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
@@ -829,6 +850,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifFaceVarying:
 					{
+						if(facevarying == -1) break;
 						PyObject* A = PyTuple_New(facevarying);
 						for(int j=0;j<facevarying;j++)
 							PyTuple_SetItem(A,j,Py_BuildValue("((ffff)(ffff)(ffff)(ffff))",
@@ -863,6 +885,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifUniform:
 					{
+						if(uniform == -1) break;
 						PyObject* A = PyTuple_New(uniform);
 						for(int j=0;j<uniform;j++)
 						{
@@ -881,6 +904,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVarying:
 					{
+						if(varying == -1) break;
 						PyObject* A = PyTuple_New(varying);
 						for(int j=0;j<varying;j++)
 						{
@@ -899,6 +923,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifVertex:
 					{
+						if(vertex == -1) break;
 						PyObject* A = PyTuple_New(vertex);
 						for(int j=0;j<vertex;j++)
 						{
@@ -917,6 +942,7 @@ bool ParseDictionaryUVVF(PyObject* dict, int n, RtToken tk[], RtPointer vl[], in
 					break;
 				case k_RifFaceVarying:
 					{
+						if(facevarying == -1) break;
 						PyObject* A = PyTuple_New(facevarying);
 						for(int j=0;j<facevarying;j++)
 						{

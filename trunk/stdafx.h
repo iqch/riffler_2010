@@ -6,7 +6,7 @@
 *	stadfx.h - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Common header
 *
-*	Version: 0.9
+*	Version: 0.95
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
