@@ -6,7 +6,7 @@
 *	RIF_Riffler.cpp - RenderMan DSO Rif-filter for using python scripts
 *  for filtering. Base source
 *
-*	Version: 0.9
+*	Version: 0.95
 *	Authors: Egor N. Chashchin                   
 *	Contact: iqcook@gmail.com 
 * 
@@ -202,11 +202,11 @@ private:
 	DECLARE_CALLBACK(HyperboloidV)(RtPoint point1, RtPoint point2, RtFloat tmax,	RtInt, RtToken[], RtPointer[]);
 
 	DECLARE_CALLBACK(PointsV)(RtInt nverts, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_CurvesV(RtToken type, RtInt ncurves, RtInt nvert[], RtToken wrap, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(CurvesV)(RtToken type, RtInt ncurves, RtInt nvert[], RtToken wrap, RtInt, RtToken[], RtPointer[]);
 
-	//RtVoid  	_NuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_PatchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt, RtToken[], RtPointer[]);
-	//RtVoid  	_TrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat min[], RtFloat max[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
+	DECLARE_CALLBACK(NuPatchV)(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(PatchMeshV)(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt, RtToken[], RtPointer[]);
+	//DECLARE_CALLBACK(TrimCurve)(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat min[], RtFloat max[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 
 	DECLARE_CALLBACK(PolygonV)(RtInt nverts, RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(PointsPolygonsV)(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt, RtToken[], RtPointer[]);
@@ -215,7 +215,7 @@ private:
 	DECLARE_CALLBACK(SubdivisionMeshV)(RtToken mask, RtInt nf, RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt, RtToken[], RtPointer[]);
 	DECLARE_CALLBACK(HierarchicalSubdivisionMeshV)(RtToken mask, RtInt nf, 	RtInt nverts[], RtInt verts[], RtInt nt, RtToken tags[],	RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt, RtToken[], RtPointer[]);
 	
-	//DECLARE_CALLBACK(BlobbyV)(RtInt nleaf, RtInt ninst, RtInt inst[], RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], RtInt, RtToken[], RtPointer[]);
+	DECLARE_CALLBACK(BlobbyV)(RtInt nleaf, RtInt ninst, RtInt inst[], RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], RtInt, RtToken[], RtPointer[]);
 
 	static RtVoid _Procedural(RtPointer data, RtBound bound, RtProcSubdivFunc sdfunc, RtProcFreeFunc freefunc);
 	PyObject* _DelayedReadArchiveFunc;
@@ -468,8 +468,12 @@ Riffler::Riffler(int argc, char **argv)
 	PARSE_CALLBACKV(Paraboloid);
 	PARSE_CALLBACKV(Hyperboloid);
 	
-	//PARSE_CALLBACKV(Blobby);
 	PARSE_CALLBACKV(Points);
+	PARSE_CALLBACKV(Curves);
+
+	PARSE_CALLBACKV(NuPatch);
+	PARSE_CALLBACKV(PatchMesh);
+	//PARSE_CALLBACK(TrimCurve);
 
 	PARSE_CALLBACKV(Polygon);
 	PARSE_CALLBACKV(GeneralPolygon);
@@ -478,6 +482,8 @@ Riffler::Riffler(int argc, char **argv)
 
 	PARSE_CALLBACKV(SubdivisionMesh);
 	PARSE_CALLBACKV(HierarchicalSubdivisionMesh);
+
+	PARSE_CALLBACKV(Blobby);
 
 	// PROCEDURAL
 	_DelayedReadArchiveFunc = PyObject_GetAttrString(m_filterobj, "DelayedReadArchive");
@@ -667,8 +673,12 @@ Riffler::~Riffler()
 		CLEAN_CALLBACK(HyperboloidV);
 
 		CLEAN_CALLBACK(PointsV);
+		CLEAN_CALLBACK(CurvesV);
 
-		//CLEAN_CALLBACK(BlobbyV);
+		CLEAN_CALLBACK(NuPatchV);
+		CLEAN_CALLBACK(PatchMeshV);
+		//CLEAN_CALLBACK(TrimCurve);
+
 		CLEAN_CALLBACK(PolygonV);
 		CLEAN_CALLBACK(PointsPolygonsV);
 		CLEAN_CALLBACK(GeneralPolygonV);
@@ -676,6 +686,8 @@ Riffler::~Riffler()
 
 		CLEAN_CALLBACK(SubdivisionMeshV);
 		CLEAN_CALLBACK(HierarchicalSubdivisionMeshV);
+
+		CLEAN_CALLBACK(BlobbyV);
 
 		// PROCEDURAL
 		CLEAN_CALLBACK(DelayedReadArchive);
@@ -752,7 +764,6 @@ extern "C"
 	};
 };
 
-bool ParseDictionary(PyObject* dict, int n, RtToken tk[], RtPointer vl[]);
 
 #define CALLBACKFN(callback)RtVoid Riffler::_##callback
 
@@ -900,6 +911,7 @@ MATRICES(ConcatTransform);
 MATRICES(Transform);
 
 // TOKEN-DICTIONARY
+bool ParseDictionary(PyObject* dict, int n, RtToken tk[], RtPointer vl[]);
 
 #define DICT RtInt n, RtToken tk[], RtPointer vl[]
 
@@ -1313,15 +1325,103 @@ RtVoid Riffler::_PointsV(RtInt nverts, DICT)
 	PyObject* pArgs = PyTuple_New(2);
 	PyTuple_SetItem(pArgs,0,Py_BuildValue("i",nverts));
 	int uniform = 1; int varying = nverts; int vertex = nverts; int facevarying = nverts;
-	CALLCV(PointsV,2)
+	CALLCV(PointsV,1)
 };
+
+RtVoid Riffler::_CurvesV(RtToken type, RtInt ncurves, RtInt nvert[], RtToken wrap, DICT)
+{
+	PyObject* pArgs = PyTuple_New(3);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("(ss)",type,wrap));
+	int uniform = ncurves; int varying = -1; int vertex = 0; int facevarying = -1;
+
+	PyObject* pP = PyTuple_New(ncurves);
+	for(int i=0;i<ncurves;i++)
+	{
+		PyTuple_SetItem(pP,i,Py_BuildValue("i",nvert[i]));
+		vertex+=nvert[i];
+	};
+	PyTuple_SetItem(pArgs,1,pP);
+
+	CALLCV(CurvesV,2)
+};
+
+RtVoid Riffler::_NuPatchV(
+						  RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax,
+						  RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, DICT)
+{
+	PyObject* pArgs = PyTuple_New(3);
+	
+	// U PART
+	{
+		int usegs = nu+uorder;
+		PyObject* pK = PyTuple_New(usegs);
+		for(int i=0;i<usegs;i++) PyTuple_SetItem(pK,i,Py_BuildValue("i",uknot[i]));
+		PyTuple_SetItem(pArgs,0,Py_BuildValue("(iO(ff))",uorder,pK,umin,umax));
+	}
+
+	// V PART
+	{
+		int vsegs = nv+vorder;
+		PyObject* pK = PyTuple_New(vsegs);
+		for(int i=0;i<vsegs;i++) PyTuple_SetItem(pK,i,Py_BuildValue("i",vknot[i]));
+		PyTuple_SetItem(pArgs,1,Py_BuildValue("(iO(ff))",vorder,pK,vmin,vmax));
+	}
+
+	// DATA
+	int uniform = (1+nu-uorder)*(1+nv-vorder);
+	int varying = (2+nu-uorder)*(2+nv-vorder); // ...NOT SURE!
+	int vertex = nu*nv; int facevarying = -1; //4*uniform; ?
+
+	CALLCV(NuPatchV,3)
+};
+
+RtVoid Riffler::_PatchMeshV(RtToken type, 
+		RtInt nu, RtToken uwrap, 
+		RtInt nv, RtToken vwrap, DICT)
+{
+	PyObject* pArgs = PyTuple_New(3);
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("s",type));
+	PyTuple_SetItem(pArgs,1,Py_BuildValue("((is)(is))",nu,uwrap,nv,vwrap));
+
+	int usteps = 0;
+	int vsteps = 0;
+	RifGetCurrentBasisSteps(&usteps, &vsteps);
+
+	int up = 0; int vp = 0;
+
+	bool isup = (strcmp(RI_PERIODIC,uwrap) == 0);
+	bool isvp = (strcmp(RI_PERIODIC,vwrap) == 0);
+
+	if(strcmp(type,RI_BILINEAR) == 0)
+	{
+		up = nu; if(isup) up--;
+		vp = nv; if(isvp) vp--;
+	}
+	else
+	{
+		up = (isup ? nu/usteps : (nu-4/usteps)+1);
+		vp = (isvp ? nv/vsteps : (nv-4/vsteps)+1);
+	};
+
+	int uniform = 1; 
+	int varying = (up+(isup ? 0 : 1))*(vp+(isvp ? 0 : 1)); 
+	int vertex = nu*nv; 
+	int facevarying = -1; // ...JUST DONT KNOW - may be varying*4
+
+	CALLCV(PatchMeshV,2)
+};
+
+//RtVoid Riffler::_TrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat min[], RtFloat max[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
+//{
+// ...TOO COMPLEX TO BE DONE RIGHT NOW
+//};
 
 RtVoid Riffler::_PolygonV(RtInt nverts, DICT)
 {
 	PyObject* pArgs = PyTuple_New(2);
 	PyTuple_SetItem(pArgs,0,Py_BuildValue("i",nverts));
 	int uniform = 1; int varying = nverts; int vertex = nverts; int facevarying = nverts;
-	CALLCV(PolygonV,2)
+	CALLCV(PolygonV,1)
 };
 
 RtVoid Riffler::_PointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], DICT)
@@ -1558,6 +1658,36 @@ RtVoid Riffler::_HierarchicalSubdivisionMeshV(
 	CALLCV(HierarchicalSubdivisionMeshV,3)
 };
 
+RtVoid Riffler::_BlobbyV(RtInt nleaf, 
+			RtInt ninst, RtInt inst[], 
+			RtInt nflt, RtFloat flt[], RtInt nstr, RtToken str[], DICT)
+{
+	PyObject* pArgs = PyTuple_New(5);
+
+	// LEAF
+	PyTuple_SetItem(pArgs,0,Py_BuildValue("i",nleaf));
+
+	// INSTRUCTIONS
+	PyObject* pI = PyTuple_New(ninst);
+	for(int i=0;i<ninst;i++) PyTuple_SetItem(pI,i,Py_BuildValue("i",inst[i]));
+	PyTuple_SetItem(pArgs,1,pI);
+
+	// FLOATS
+	PyObject* pF = PyTuple_New(nflt);
+	for(int i=0;i<nflt;i++) PyTuple_SetItem(pF,i,Py_BuildValue("f",flt[i]));
+	PyTuple_SetItem(pArgs,2,pF);
+
+	// STRINGS
+	PyObject* pS = PyTuple_New(nstr);
+	for(int i=0;i<nstr;i++) PyTuple_SetItem(pS,i,Py_BuildValue("s",str[i]));
+	PyTuple_SetItem(pArgs,3,pS);
+
+	int uniform = 1; int varying = nleaf; int vertex = nleaf; int facevarying = -1;
+
+	// DICT
+	CALLCV(BlobbyV,4)
+};
+
 RtVoid Riffler::_Procedural(RtPointer data, RtBound b, RtProcSubdivFunc sdfunc, RtProcFreeFunc freefunc)
 {
 	PyObject* bound = Py_BuildValue("((ff)(ff)(ff))",b[0],b[1],b[2],b[3],b[4],b[5]);
@@ -1618,8 +1748,3 @@ RtVoid Riffler::_Procedural(RtPointer data, RtBound b, RtProcSubdivFunc sdfunc, 
 		return;
 	};
 };
-
-
-
-
-
