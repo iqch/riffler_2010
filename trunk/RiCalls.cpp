@@ -7,9 +7,9 @@
 *  for filtering. Embedded module source
 *
 *	Version: 0.95
-*	Authors: Egor N. Chashchin                   
-*	Contact: iqcook@gmail.com 
-* 
+*	Authors: Egor N. Chashchin
+*	Contact: iqcook@gmail.com
+*
 */
 #include "stdafx.h"
 
@@ -60,7 +60,8 @@ PLAIN_CALL(EditAttributeEnd);
 PLAIN_CALL(EditWorldEnd);
 
 // ONE FLOAT
-#define ONE_FLOAT_CALL(method) DEFINE_RICALL(method) { 	RtFloat value = 0.0f; if(!PyArg_ParseTuple(args, "f", &value)) FAIL; Ri##method(value); SUCCESS };
+//#define ONE_FLOAT_CALL(method) DEFINE_RICALL(method) { 	RtFloat value = 0.0f; if(!PyArg_ParseTuple(args, "f", &value)) FAIL; Ri##method(value); SUCCESS };
+#define ONE_FLOAT_CALL(method) DEFINE_RICALL(method) { Ri##method(PyFloat_AsDouble(PyTuple_GetItem(args,0))); SUCCESS };
 
 ONE_FLOAT_CALL(FrameAspectRatio);
 ONE_FLOAT_CALL(PixelVariance);
@@ -90,7 +91,7 @@ DEFINE_RICALL(Matte)
 	int value = 0;
 	if(!PyArg_ParseTuple(args, "i", &value)) FAIL;
 	RiMatte(value == 0 ? 0 : 1);
-	SUCCESS 
+	SUCCESS
 };
 
 // STRINGS
@@ -266,6 +267,8 @@ MATRICIES_CALL(Transform);
 bool CollectDictionary(PyObject* dict, int* n, RtToken** tk, RtPointer** vl);
 bool DisposeTKVL(int n, RtToken* tk, RtPointer* vl);
 
+#define DICT n,tk,vl
+
 #define TOKEN_DICTIONARY_CALL(method) DEFINE_RICALL(method) \
 {	\
 	RtToken name = PyString_AsString(PyTuple_GetItem(args,0));	\
@@ -273,8 +276,8 @@ bool DisposeTKVL(int n, RtToken* tk, RtPointer* vl);
 	RtInt n = 0; \
 	RtToken* tk; \
 	RtPointer* vl; \
-	if(CollectDictionary(dict,&n, &tk,&vl))	Ri##method(name,n,tk,vl);	\
-	DisposeTKVL(n,tk,vl); \
+	if(CollectDictionary(dict,&n, &tk,&vl))	Ri##method(name,DICT);	\
+	DisposeTKVL(DICT); \
 	SUCCESS	\
 };
 
@@ -287,9 +290,9 @@ bool DisposeTKVL(int n, RtToken* tk, RtPointer* vl);
 //	RtPointer* vl;
 //	if(CollectDictionary(dict,&n, &tk,&vl))
 //	{
-//		RiAttributeV(name,n,tk,vl);
+//		RiAttributeV(name,DICT);
 //	};
-//	DisposeTKVL(n,tk,vl);
+//	DisposeTKVL(DICT);
 //	SUCCESS
 //};
 
@@ -322,8 +325,8 @@ TOKEN_DICTIONARY_CALL(ImagerV);
 	RtInt n = 0; \
 	RtToken* tk; \
 	RtPointer* vl; \
-	if(CollectDictionary(dict,&n, &tk,&vl))	Ri##method(one, two,n,tk,vl);	\
-	DisposeTKVL(n,tk,vl); \
+	if(CollectDictionary(dict,&n, &tk,&vl))	Ri##method(one, two,DICT);	\
+	DisposeTKVL(DICT); \
 	SUCCESS	\
 };
 
@@ -342,8 +345,8 @@ DEFINE_RICALL(ReadArchiveV)
 	RtInt n = 0;
 	RtToken* tk;
 	RtPointer* vl;
-	if(CollectDictionary(dict,&n, &tk,&vl)) RiReadArchiveV(name,NULL,n,tk,vl);
-	DisposeTKVL(n,tk,vl);
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiReadArchiveV(name,NULL,DICT);
+	DisposeTKVL(DICT);
 	SUCCESS
 };
 
@@ -357,7 +360,7 @@ DEFINE_RICALL(MotionBeginV)
 
 	float* times = new float[n];
 	if(times == NULL) FAIL;
-	
+
 	for(int i=0;i<n;i++) times[i] =  PyFloat_AsDouble(PyTuple_GetItem(pT,i));
 
 	RiMotionBeginV(n,times);
@@ -437,8 +440,8 @@ DEFINE_RICALL(DisplayV)
 	RtInt n = 0;
 	RtToken* tk;
 	RtPointer* vl;
-	if(CollectDictionary(dict,&n, &tk,&vl)) RiDisplayV(name,type,mode,n,tk,vl);
-	DisposeTKVL(n,tk,vl);
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiDisplayV(name,type,mode,DICT);
+	DisposeTKVL(DICT);
 
 	delete [] name;
 	delete [] type;
@@ -560,9 +563,9 @@ DEFINE_RICALL(MakeTextureV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiMakeTextureV(pix,tex,sw,tw,filterFunc,sf,tf,n,tk,vl);
+		RiMakeTextureV(pix,tex,sw,tw,filterFunc,sf,tf,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	delete [] sw;
 	delete [] tw;
@@ -585,9 +588,9 @@ DEFINE_RICALL(MakeShadowV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiMakeShadowV(pix,tex,n,tk,vl);
+		RiMakeShadowV(pix,tex,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	delete [] tex;
 	delete [] pix;
@@ -625,9 +628,9 @@ DEFINE_RICALL(MakeCubeFaceEnvironmentV)
 	{
 		RiMakeCubeFaceEnvironmentV(
 			px,nx,py,ny,pz,nz,tex,
-			fov,filterFunc,sf,tf,n,tk,vl);
+			fov,filterFunc,sf,tf,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	delete [] tex;
 	delete [] px; delete [] nx;
@@ -656,9 +659,9 @@ DEFINE_RICALL(MakeLatLongEnvironmentV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiMakeLatLongEnvironmentV(pix,tex,filterFunc,sf,tf,n,tk,vl);
+		RiMakeLatLongEnvironmentV(pix,tex,filterFunc,sf,tf,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	delete [] tex;
 	delete [] pix;
@@ -690,9 +693,9 @@ DEFINE_RICALL(MakeBrickMapV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiMakeBrickMapV(cnt,(char**)maps,tex,n,tk,vl);
+		RiMakeBrickMapV(cnt,(char**)maps,tex,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	delete [] tex;
 
@@ -718,9 +721,9 @@ DEFINE_RICALL(SphereV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiSphereV(radius,zmin,zmax,tmax,n,tk,vl);
+		RiSphereV(radius,zmin,zmax,tmax,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	SUCCESS
 };
@@ -737,11 +740,8 @@ DEFINE_RICALL(ConeV)
 	RtInt n = 0;
 	RtToken* tk;
 	RtPointer* vl;
-		if(CollectDictionary(dict,&n, &tk,&vl))
-	{
-		RiConeV(height,radius,tmax,n,tk,vl);
-	}
-	DisposeTKVL(n,tk,vl);
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiConeV(height,radius,tmax,DICT);
+	DisposeTKVL(DICT);
 
 	SUCCESS
 };
@@ -761,9 +761,9 @@ DEFINE_RICALL(CylinderV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiCylinderV(radius,zmin,zmax,tmax,n,tk,vl);
+		RiCylinderV(radius,zmin,zmax,tmax,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	SUCCESS
 };
@@ -782,9 +782,9 @@ DEFINE_RICALL(DiskV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiDiskV(height,radius,tmax,n,tk,vl);
+		RiDiskV(height,radius,tmax,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	SUCCESS
 };
@@ -805,9 +805,9 @@ DEFINE_RICALL(TorusV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiTorusV(a1,a2,a3,a4,a5,n,tk,vl);
+		RiTorusV(a1,a2,a3,a4,a5,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	SUCCESS
 };
@@ -827,9 +827,9 @@ DEFINE_RICALL(ParaboloidV)
 	RtPointer* vl;
 	if(CollectDictionary(dict,&n, &tk,&vl))
 	{
-		RiParaboloidV(a1,a2,a3,a4,n,tk,vl);
+		RiParaboloidV(a1,a2,a3,a4,DICT);
 	}
-	DisposeTKVL(n,tk,vl);
+	DisposeTKVL(DICT);
 
 	SUCCESS
 };
@@ -859,12 +859,280 @@ DEFINE_RICALL(HyperboloidV)
 	RtInt n = 0;
 	RtToken* tk;
 	RtPointer* vl;
-	if(CollectDictionary(dict,&n, &tk,&vl)) RiHyperboloidV(p0,p1,a1,n,tk,vl);
-	DisposeTKVL(n,tk,vl);
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiHyperboloidV(p0,p1,a1,DICT);
+	DisposeTKVL(DICT);
 
 	SUCCESS
 };
 
+DEFINE_RICALL(PointsV)
+{
+	if(PyTuple_Size(args) != 2) FAIL;
 
+	RtInt N = PyInt_AsLong(PyTuple_GetItem(args,0));
 
+	PyObject* dict =  PyTuple_GetItem(args,1);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
 
+	if(CollectDictionary(dict,&n, &tk,&vl)) RiPointsV(N,DICT);
+	DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(CurvesV)
+{
+	if(PyTuple_Size(args) != 4) FAIL;
+
+	char* type = PyString_AsString(PyTuple_GetItem(args,0));
+	char* wrap = PyString_AsString(PyTuple_GetItem(args,1));
+
+	PyObject* pVtx = PyTuple_GetItem(args,2);
+
+	if(!PyTuple_Check(pVtx)) FAIL;
+
+	int cnt = PyTuple_Size(pVtx);
+	if(cnt < 1) FAIL;
+
+	RtInt* vtx = new RtInt[cnt];
+	if(vtx == NULL) FAIL;
+	for(int i=0;i<cnt;i++) vtx[i] = PyInt_AsLong(PyTuple_GetItem(pVtx,i));
+
+	PyObject* dict =  PyTuple_GetItem(args,3);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiCurvesV(type,cnt,vtx,wrap,DICT);
+	};
+
+	delete [] vtx;
+	DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+// ...LATER
+DEFINE_RICALL(NuPatchV)
+{
+	//if(PyTuple_Size(args) != 4) FAIL;
+
+	//PyObject* dict =  PyTuple_GetItem(args,3);
+	//RtInt n = 0;
+	//RtToken* tk;
+	//RtPointer* vl;
+
+	//if(CollectDictionary(dict,&n, &tk,&vl)) 	{};
+
+	//DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+ // ...LATER
+DEFINE_RICALL(PatchMeshV)
+{
+	//if(PyTuple_Size(args) != 4) FAIL;
+
+	//PyObject* dict =  PyTuple_GetItem(args,3);
+	//RtInt n = 0;
+	//RtToken* tk;
+	//RtPointer* vl;
+
+	//if(CollectDictionary(dict,&n, &tk,&vl)) 	{ };
+
+	//DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(PolygonV)
+{
+	if(PyTuple_Size(args) != 1) FAIL;
+
+	PyObject* dict =  PyTuple_GetItem(args,0);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+
+	while(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		PyObject* str = Py_BuildValue("s","P");
+		PyObject* P = PyDict_GetItem(dict,str);
+		Py_XDECREF(str);
+
+		if(P == NULL) break;
+
+		if(!PyTuple_Check(P))
+		{
+			Py_XDECREF(P);
+			break;
+		};
+
+		int sz = PyTuple_Size(P);
+		Py_XDECREF(P);
+
+		if(sz < 1) break;
+		RiPolygonV(sz,DICT);
+
+		break;
+	};
+
+	DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+DEFINE_RICALL(PointsPolygonsV)
+{
+	if(PyTuple_Size(args) != 2) FAIL;
+
+	PyObject* vtx =  PyTuple_GetItem(args,0);
+
+	if(!PyTuple_Check(vtx)) FAIL;
+
+	int vtxsz = PyTuple_Size(vtx);
+
+	if(vtxsz < 1)
+	{
+		Py_XDECREF(vtx);
+		FAIL;
+	};
+
+	RtInt* _vtx = new RtInt[vtxsz];
+
+	int vsz =0;
+
+	for(int i=0;i<vtxsz;i++)
+	{
+		PyObject* tp = PyTuple_GetItem(vtx,i);
+		if(!PyTuple_Check(tp))
+		{
+			Py_XDECREF(tp);
+			Py_XDECREF(vtx);
+			delete [] vtx;
+			FAIL;
+		};
+
+		_vtx[i] = PyTuple_Size(tp);
+
+		if(_vtx[i] < 3)
+		{
+			Py_XDECREF(tp);
+			Py_XDECREF(vtx);
+			delete [] vtx;
+			FAIL;
+		};
+
+		vsz+=_vtx[i];
+
+		Py_XDECREF(tp);
+	};
+
+	RtInt* _vtxind = new RtInt[vsz];
+	int index = 0;
+
+	for(int i=0;i<vtxsz;i++)
+	{
+		PyObject* tp = PyTuple_GetItem(vtx,i);
+		for(int j=0;j<_vtx[i];j++)
+		{
+			PyObject* item = PyTuple_GetItem(tp,j);
+			_vtxind[index] = PyInt_AsLong(item);
+			Py_XDECREF(item);
+			index++;
+		};
+		Py_XDECREF(tp);
+	};
+
+	PyObject* dict =  PyTuple_GetItem(args,1);
+	RtInt n = 0;
+	RtToken* tk;
+	RtPointer* vl;
+
+	if(CollectDictionary(dict,&n, &tk,&vl))
+	{
+		RiPointsPolygonsV(vtxsz,_vtx,_vtxind,DICT);
+	};
+
+	delete [] _vtx;
+	delete [] _vtxind;
+
+	DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+// ...
+DEFINE_RICALL(GeneralPolygonV)
+{
+	//if(PyTuple_Size(args) != 4) FAIL;
+
+	//PyObject* dict =  PyTuple_GetItem(args,3);
+	//RtInt n = 0;
+	//RtToken* tk;
+	//RtPointer* vl;
+
+	//if(CollectDictionary(dict,&n, &tk,&vl)) 	{ };
+
+	//DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+// ...
+DEFINE_RICALL(PointsGeneralPolygonsV)
+{
+	//if(PyTuple_Size(args) != 4) FAIL;
+
+	//PyObject* dict =  PyTuple_GetItem(args,3);
+	//RtInt n = 0;
+	//RtToken* tk;
+	//RtPointer* vl;
+
+	//if(CollectDictionary(dict,&n, &tk,&vl)) 	{ };
+
+	//DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+// ...
+DEFINE_RICALL(SubdivisionMeshV)
+{
+	//if(PyTuple_Size(args) != 4) FAIL;
+
+	//PyObject* dict =  PyTuple_GetItem(args,3);
+	//RtInt n = 0;
+	//RtToken* tk;
+	//RtPointer* vl;
+
+	//if(CollectDictionary(dict,&n, &tk,&vl)) 	{ };
+
+	//DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+// ...
+DEFINE_RICALL(HierarchicalSubdivisionMeshV)
+{
+	//if(PyTuple_Size(args) != 4) FAIL;
+
+	//PyObject* dict =  PyTuple_GetItem(args,3);
+	//RtInt n = 0;
+	//RtToken* tk;
+	//RtPointer* vl;
+
+	//if(CollectDictionary(dict,&n, &tk,&vl)) 	{ };
+
+	//DisposeTKVL(DICT);
+
+	SUCCESS
+};
+
+// END
