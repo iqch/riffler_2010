@@ -169,6 +169,20 @@ DEFINE_RICALL(TorusV);
 DEFINE_RICALL(ParaboloidV);
 DEFINE_RICALL(HyperboloidV);
 
+DEFINE_RICALL(PointsV);
+DEFINE_RICALL(CurvesV);
+
+DEFINE_RICALL(NuPatchV);
+DEFINE_RICALL(PatchMeshV);
+
+DEFINE_RICALL(PolygonV);
+DEFINE_RICALL(PointsPolygonsV);
+
+DEFINE_RICALL(GeneralPolygonV);
+DEFINE_RICALL(PointsGeneralPolygonsV);
+DEFINE_RICALL(SubdivisionMeshV);
+DEFINE_RICALL(HierarchicalSubdivisionMeshV);
+
 // TABLE
 #define RI_METHOD(method) {#method, _Ri##method, METH_VARARGS,""}
 #define RI_METHODV(method) {#method, _Ri##method##V, METH_VARARGS,""}
@@ -328,6 +342,20 @@ static PyMethodDef MethodTable[] = {
 	RI_METHODV(Torus),
 	RI_METHODV(Paraboloid),
 	RI_METHODV(Hyperboloid),
+
+	RI_METHODV(Curves),
+	RI_METHODV(Points),
+
+	RI_METHODV(NuPatch),
+	RI_METHODV(PatchMesh),
+
+	RI_METHODV(Polygon),
+	RI_METHODV(PointsPolygons),
+
+	RI_METHODV(GeneralPolygon),
+	RI_METHODV(PointsGeneralPolygons),
+	RI_METHODV(SubdivisionMesh),
+	RI_METHODV(HierarchicalSubdivisionMesh),
 
 	// END
 	{NULL, NULL, 0, NULL}
