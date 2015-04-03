@@ -1,0 +1,1 @@
+Pixar's Renderman rif-filter stub-dso for using python scripts as rif-filters
