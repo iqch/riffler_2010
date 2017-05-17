@@ -1,3 +1,5 @@
+This project is obsolete, please refer to riffler repository
+
 # Introduction #
 
 Rif Riffler is a dso module, that allows using custom python scripts act like rib-filtering procedure.
